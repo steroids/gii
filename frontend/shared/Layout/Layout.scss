@@ -1,0 +1,15 @@
+
+.Layout {
+  color: #eee;
+  background-color: #1f1f1f;
+
+  &__header {
+    background-color: #3c3f41;
+    padding: 4px 12px;
+    border-bottom: solid 1px #323232;
+    margin-bottom: 0;
+  }
+  &__logo {
+    font-size: 14px;
+  }
+}

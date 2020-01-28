@@ -1,0 +1,60 @@
+@import 'style/variables';
+
+.ModelView {
+  &__input-attribute .form-control {
+    font-weight: bold;
+  }
+  &__input-hint .FieldLayoutView__field {
+    padding-left: 30%;
+  }
+
+  &__input-attribute, &__input-label, &__input-app-type {
+    .form-control, .DropDownFieldView__selected-items {
+      border-color: $primary;
+    }
+  }
+
+  .table tbody tr:nth-of-type(odd) {
+    > td {
+      padding-top: 15px;
+    }
+  }
+  .table tbody tr:nth-of-type(even) {
+    border-bottom: solid $table-border-width $table-border-color;
+
+    > td {
+      padding-bottom: 15px;
+    }
+  }
+
+  .FieldListView__tr_is-protected {
+    opacity: .4;
+    pointer-events: none;
+  }
+
+  .FieldListView__additional {
+    position: relative;
+
+    input.form-control {
+      width: 150px;
+    }
+  }
+  .FieldListView__additional-label {
+    position: absolute;
+    top: -6px;
+    left: 6px;
+    z-index: 1;
+    background: #fff;
+    height: 10px;
+    font-size: 10px;
+    padding: 2px;
+    box-shadow: 0 0 3px #fff;
+    line-height: 6px;
+    color: $gray-600;
+  }
+
+  .DropDownFieldView__drop-down {
+    width: auto;
+    max-width: 500px;
+  }
+}

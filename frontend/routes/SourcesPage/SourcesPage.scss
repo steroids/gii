@@ -1,0 +1,53 @@
+@import 'style/variables';
+
+.SourcesPage {
+  position: relative;
+  min-height: calc(100vh - 39px);
+
+  &__tree {
+    height: 100%;
+    background-color: #383b3d;
+
+    .TreeView {
+      height: 100%;
+      overflow-y: auto;
+    }
+
+    &, a {
+      color: #ddd;
+    }
+    a:hover {
+      color: #aaa;
+    }
+  }
+
+  &__content {
+    height: 100%;
+    margin: 0 15px;
+    padding: 15px 0;
+  }
+
+  .FieldLayoutView__field, .form-control {
+    width: 100% !important;
+  }
+  .FieldListView .CheckboxFieldView {
+    margin: 3px 0 0 3px;
+  }
+
+  .FieldListView__remove {
+    cursor: pointer;
+    width: 24px;
+    height: 31px;
+    text-align: center;
+    color: $danger;
+
+    &:hover {
+      color: lighten($danger, 15%);
+    }
+  }
+
+  .AutoCompleteFieldView__drop-down {
+    width: auto;
+    max-width: 300px;
+  }
+}
