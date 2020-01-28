@@ -69,7 +69,7 @@ class EnumEntity extends EnumEntityMeta
     {
         if ($this->validate()) {
             // Lazy create module
-            ModuleEntity::findOrCreate($this->classFile->moduleId);
+            ModuleEntity::autoCreateForEntity($this);
 
             // Create/update meta information
             GiiHelper::renderFile('enum/meta', $this->getMetaPath(), [

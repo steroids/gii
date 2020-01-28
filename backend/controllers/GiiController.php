@@ -177,33 +177,43 @@ class GiiController extends Controller
         $entityClass = ClassType::getEntityClass($type);
 
         $namespace = str_replace('-', '\\', $namespace);
-        return $entityClass::findOne(ClassFile::createByClass($namespace . '\\' . $name));
+        $className = $namespace . '\\' . $name;
+        $classFile = class_exists($className)
+            ? ClassFile::createByClass($namespace . '\\' . $name)
+            : ClassFile::createByNamespace($namespace, $name);
+
+        $entity = class_exists($className)
+            ? $entityClass::findOne($classFile)
+            : new $entityClass([
+                'classFile' => $classFile,
+                'namespace' => $classFile->namespace,
+                'name' => $classFile->name,
+            ]);
+        if (Yii::$app->request->isPost) {
+            switch ($type) {
+                case ClassType::MODEL:
+                case ClassType::FORM:
+                    $entity->listenRelationData('attributeItems');
+                    $entity->listenRelationData('relationItems');
+                    break;
+
+                case ClassType::CRUD:
+                case ClassType::ENUM:
+                    $entity->listenRelationData('items');
+                    break;
+            }
+
+            if ($entity->load(\Yii::$app->request->post())) {
+                $entity->save();
+            }
+        }
+
+        return $entity;
     }
 
-    public function actionApiGetEntities()
-    {
-        $moduleIds = array_keys(GiiHelper::getModules());
-        sort($moduleIds);
 
-        return [
-            'moduleIds' => $moduleIds,
-            'classes' => [
-                'crud' => CrudEntity::findAll(),
-                'enum' => EnumEntity::findAll(),
-                'form' => FormEntity::findAll(),
-                'model' => ModelEntity::findAll(),
-            ],
-            'appTypes' => array_map(function ($appType) {
-                /** @type Type $appType */
-                $additionalFields = $appType->giiOptions();
-                return [
-                    'name' => $appType->name,
-                    'title' => ucfirst($appType->name),
-                    'additionalFields' => !empty($additionalFields) ? $additionalFields : null,
-                ];
-            }, \Yii::$app->types->getTypes()),
-        ];
-    }
+
+
 
     public function actionApiGetPermissions()
     {
@@ -297,42 +307,6 @@ class GiiController extends Controller
         }
 
         \Yii::$app->session->addFlash('success', 'Permissions ' . $prefix . '::* updated');
-    }
-
-    public function actionApiClassSave()
-    {
-        switch (\Yii::$app->request->post('classType')) {
-            case ClassType::MODEL:
-                $entity = new ModelEntity();
-                $entity->listenRelationData('attributeItems');
-                $entity->listenRelationData('relationItems');
-                break;
-
-            case ClassType::FORM:
-                $entity = new FormEntity();
-                $entity->listenRelationData('attributeItems');
-                $entity->listenRelationData('relationItems');
-                break;
-
-            case ClassType::CRUD:
-                $entity = new CrudEntity();
-                $entity->listenRelationData('items');
-                break;
-
-            case ClassType::ENUM:
-                $entity = new EnumEntity();
-                $entity->listenRelationData('items');
-                break;
-
-            default:
-                throw new BadRequestHttpException();
-        }
-
-        if ($entity->load(\Yii::$app->request->post())) {
-            $entity->save();
-        }
-
-        return $entity;
     }
 
     protected function getChildNamesRecursive($permissionName)

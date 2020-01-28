@@ -111,7 +111,7 @@ class ModelEntity extends ModelEntityMeta
                 : null;
 
             // Lazy create module
-            ModuleEntity::findOrCreate($this->classFile->moduleId);
+            ModuleEntity::autoCreateForEntity($this);
 
             // Create/update meta information
             GiiHelper::renderFile('model/meta', $this->getMetaPath(), [

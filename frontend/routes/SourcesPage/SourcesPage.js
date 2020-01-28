@@ -1,12 +1,12 @@
 import React from 'react';
 import {Resize, ResizeHorizon} from 'react-resize-layout';
-import {bem, components} from '@steroids2/core/hoc';
-import Tree from '@steroids2/core/ui/nav/Tree';
+import {bem, components} from '@steroidsjs/core/hoc';
+import Tree from '@steroidsjs/core/ui/nav/Tree';
 import {connect} from 'react-redux';
 import _get from 'lodash/get';
 import _isEqual from 'lodash/isEqual';
-import {goToPage} from '@steroids2/core/actions/navigation';
-import Loader from '@steroids2/core/ui/layout/Loader';
+import {goToPage} from '@steroidsjs/core/actions/navigation';
+import Loader from '@steroidsjs/core/ui/layout/Loader';
 
 import {ROUTE_SOURCES} from '../index';
 import EnumView from './views/EnumView';
@@ -87,8 +87,10 @@ export default class SourcesPage extends React.PureComponent {
                             />
                         </div>
                     </ResizeHorizon>
-                    <ResizeHorizon minWidth='600px'
-                                   overflow='auto'>
+                    <ResizeHorizon
+                        minWidth='600px'
+                        overflow='auto'
+                    >
                         <div className={bem.element('content')}>
                             {this.state.isLoading && (
                                 <Loader/>
@@ -159,7 +161,13 @@ export default class SourcesPage extends React.PureComponent {
     }
 
     _onEntitySubmit(values) {
+        let {type, namespace, name} = _get(this.props, 'match.params');
+        name = name || values.name;
 
+        this.props.http.post(`/api/gii/entities/${type}/${namespace}/${name}`, values)
+            .then(entity => {
+                console.log(123, entity);
+            });
     }
 
 }

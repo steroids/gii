@@ -6,8 +6,8 @@ require('../../react/webpack')
         webpack: {
             resolve: {
                 alias: {
-                    '@steroids2/core': __dirname + '/../../react',
-                    '@steroids2/bootstrap': __dirname + '/../../react-bootstrap',
+                    '@steroidsjs/core': __dirname + '/../../react',
+                    '@steroidsjs/bootstrap': __dirname + '/../../react-bootstrap',
                 },
             },
         },

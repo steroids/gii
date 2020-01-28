@@ -77,7 +77,7 @@ class FormEntity extends ModelEntity
     {
         if ($this->validate()) {
             // Lazy create module
-            ModuleEntity::findOrCreate($this->classFile->moduleId);
+            ModuleEntity::autoCreateForEntity($this);
 
             GiiHelper::renderFile($this->queryModel ? 'form/meta_search' : 'form/meta_form', $this->getMetaPath(), [
                 'formEntity' => $this,

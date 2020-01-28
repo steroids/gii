@@ -2,10 +2,10 @@ import React from 'react';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import {getFormValues, change} from 'redux-form';
-import {Form, AutoCompleteField, Button, Field, DropDownField, FieldList} from '@steroids2/core/ui/form';
+import {Form, AutoCompleteField, Button, Field, DropDownField, FieldList} from '@steroidsjs/core/ui/form';
 import _get from 'lodash/get';
 import _some from 'lodash/some';
-import {bem} from '@steroids2/core/hoc';
+import {bem} from '@steroidsjs/core/hoc';
 
 import ClassType from 'enums/ClassType';
 import ModelAttributeRow from './ModelAttributeRow';
@@ -85,9 +85,8 @@ export default class ModelView extends React.PureComponent {
                     {this.props.classType === ClassType.FORM && (
                         <div className='row'>
                             <div className='col-4'>
-                                <Field
+                                <AutoCompleteField
                                     attribute='queryModel'
-                                    component={AutoCompleteField}
                                     items={this.props.classesByType[ClassType.MODEL]}
                                 />
                             </div>

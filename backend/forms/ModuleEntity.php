@@ -32,18 +32,18 @@ class ModuleEntity extends ModuleEntityMeta
     }
 
     /**
-     * @param string $id
+     * @param EntityInterface $entity
      * @return static
      * @throws \Exception
      */
-    public static function findOrCreate($id)
+    public static function autoCreateForEntity($entity)
     {
-        $ids = array_keys(DefaultConfig::getModuleClasses());
-        $entity = new static(['id' => $id]);
-        if (!in_array($entity->classFile->moduleId, $ids)) {
-            $entity->save();
+        if (strpos(ltrim($entity->classFile->className, '\\'), STEROIDS_APP_NAMESPACE . '\\') !== 0) {
+            return;
         }
-        return $entity;
+
+        $entity = new static(['id' => $entity->classFile->moduleId]);
+        $entity->save();
     }
 
     public function save()

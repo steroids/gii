@@ -48,7 +48,7 @@ class CrudEntity extends CrudEntityMeta
     {
         if ($this->validate()) {
             // Lazy create module
-            ModuleEntity::findOrCreate($this->classFile->moduleId);
+            ModuleEntity::autoCreateForEntity($this);
 
             // Create/update meta information
             GiiHelper::renderFile('crud/meta', $this->getMetaPath(), [

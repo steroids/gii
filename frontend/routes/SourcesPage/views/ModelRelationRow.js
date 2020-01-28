@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {formValueSelector} from 'redux-form';
-import {bem} from '@steroids2/core/hoc';
-import {Field} from '@steroids2/core/ui/form';
+import {bem} from '@steroidsjs/core/hoc';
+import {Field} from '@steroidsjs/core/ui/form';
 
 import RelationType from 'enums/RelationType';
 

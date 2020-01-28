@@ -1,9 +1,9 @@
 import React from 'react';
-import {Link, Nav} from '@steroids2/core/ui/nav';
-import {Notifications} from '@steroids2/core/ui/layout';
-import layout, {STATUS_LOADING, STATUS_OK} from '@steroids2/core/hoc/layout';
+import {Link, Nav} from '@steroidsjs/core/ui/nav';
+import {Notifications} from '@steroidsjs/core/ui/layout';
+import layout, {STATUS_LOADING, STATUS_OK} from '@steroidsjs/core/hoc/layout';
 
-import {bem, components} from '@steroids2/core/hoc';
+import {bem, components} from '@steroidsjs/core/hoc';
 import {ROUTE_ROOT} from '../../routes';
 import './Layout.scss';
 

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {formValueSelector} from 'redux-form';
-import {bem} from '@steroids2/core/hoc';
+import {bem} from '@steroidsjs/core/hoc';
 
 @connect(
     (state, props) => ({

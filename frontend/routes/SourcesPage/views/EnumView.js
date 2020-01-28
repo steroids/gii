@@ -4,8 +4,8 @@ import {connect} from 'react-redux';
 import {formValueSelector} from 'redux-form';
 import _get from 'lodash-es/get';
 import _upperFirst from 'lodash-es/upperFirst';
-import {Form, Button, Field, InputField, CheckboxField, FieldList} from '@steroids2/core/ui/form';
-import {bem} from '@steroids2/core/hoc';
+import {Form, Button, Field, InputField, CheckboxField, FieldList} from '@steroidsjs/core/ui/form';
+import {bem} from '@steroidsjs/core/hoc';
 
 import './EnumView.scss';
 

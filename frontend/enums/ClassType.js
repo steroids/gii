@@ -1,4 +1,4 @@
-import Enum from '@steroids2/core/base/Enum';
+import Enum from '@steroidsjs/core/base/Enum';
 
 export default class ClassType extends Enum {
 
