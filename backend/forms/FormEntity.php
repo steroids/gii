@@ -14,7 +14,7 @@ use yii\helpers\ArrayHelper;
 /**
  * @property-read ModelEntity $queryModelEntity
  */
-class FormEntity extends ModelEntity
+class FormEntity extends ModelEntity implements EntityInterface
 {
     /**
      * @var ClassFile
@@ -43,6 +43,16 @@ class FormEntity extends ModelEntity
             return null;
         }
 
+        return static::findOrCreate($classFile);
+    }
+
+    /**
+     * @param ClassFile $classFile
+     * @return static
+     * @throws \ReflectionException
+     */
+    public static function findOrCreate(ClassFile $classFile)
+    {
         $entity = new static([
             'classFile' => $classFile,
             'namespace' => $classFile->namespace,
@@ -51,22 +61,24 @@ class FormEntity extends ModelEntity
 
         /** @var SearchModel $searchModel */
         $className = $classFile->className;
-        $searchModel = new $className();
+        if (class_exists($className)) {
+            $searchModel = new $className();
 
-        if (method_exists($searchModel, 'createQuery')) {
-            $query = $searchModel->createQuery();
-            if (property_exists(get_class($query), 'modelClass')) {
-                $entity->queryModel = $query->modelClass;
+            if (method_exists($searchModel, 'createQuery')) {
+                $query = $searchModel->createQuery();
+                if (property_exists(get_class($query), 'modelClass')) {
+                    $entity->queryModel = $query->modelClass;
+                }
             }
-        }
 
-        $entity->populateRelation('relationItems', FormRelationEntity::findAll($entity));
-        $entity->populateRelation('attributeItems', FormAttributeEntity::findAll($entity));
+            $entity->populateRelation('relationItems', FormRelationEntity::findAll($entity));
+            $entity->populateRelation('attributeItems', FormAttributeEntity::findAll($entity));
 
-        if (method_exists($searchModel, 'sortFields')) {
-            $sortFields = $searchModel->sortFields();
-            foreach ($entity->attributeItems as $item) {
-                $item->isSortable = in_array($item->name, $sortFields);
+            if (method_exists($searchModel, 'sortFields')) {
+                $sortFields = $searchModel->sortFields();
+                foreach ($entity->attributeItems as $item) {
+                    $item->isSortable = in_array($item->name, $sortFields);
+                }
             }
         }
 
@@ -79,23 +91,17 @@ class FormEntity extends ModelEntity
             // Lazy create module
             ModuleEntity::autoCreateForEntity($this);
 
-            GiiHelper::renderFile($this->queryModel ? 'form/meta_search' : 'form/meta_form', $this->getMetaPath(), [
+            GiiHelper::renderFile($this->queryModel ? 'form/meta_search' : 'form/meta_form', $this->classFile->metaPath, [
                 'formEntity' => $this,
             ]);
             \Yii::$app->session->addFlash('success', 'Meta info form ' . $this->classFile->name . 'Meta update');
 
             // Create model, if not exists
-            if (!file_exists($this->getPath())) {
-                GiiHelper::renderFile('form/form', $this->getPath(), [
+            if (!file_exists($this->classFile->path)) {
+                GiiHelper::renderFile('form/form', $this->classFile->path, [
                     'formEntity' => $this,
                 ]);
                 \Yii::$app->session->addFlash('success', 'Added form ' . $this->classFile->name);
-            }
-
-            if (GiiModule::getInstance()->generateJsMeta) {
-                GiiHelper::renderFile('form/meta_js', $this->getMetaJsPath(), [
-                    'formEntity' => $this,
-                ]);
             }
 
             return true;
@@ -108,21 +114,6 @@ class FormEntity extends ModelEntity
         return $this->classFile->className;
     }
 
-    public function getPath()
-    {
-        return "{$this->classFile->moduleDir}/forms/{$this->classFile->name}.php";
-    }
-
-    public function getMetaPath()
-    {
-        return "{$this->classFile->moduleDir}/forms/meta/{$this->classFile->name}Meta.php";
-    }
-
-    public function getMetaJsPath()
-    {
-        return "{$this->classFile->moduleDir}/forms/meta/{$this->classFile->name}Meta.js";
-    }
-
     public function renderRules(&$useClasses = [])
     {
         return ModelEntity::exportRules($this->publicAttributeItems, $this->publicRelationItems, $useClasses);
@@ -133,7 +124,7 @@ class FormEntity extends ModelEntity
      */
     public function getQueryModelEntity()
     {
-        return $this->queryModel ? ModelEntity::findOne(ClassFile::createByClass($this->queryModel)) : null;
+        return $this->queryModel ? ModelEntity::findOne(ClassFile::createByClass($this->queryModel), ClassFile::TYPE_MODEL) : null;
     }
 
     /**

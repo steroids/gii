@@ -1,22 +1,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
-import {formValueSelector} from 'redux-form';
+import {getFormValues} from 'redux-form';
 import _get from 'lodash-es/get';
 import _upperFirst from 'lodash-es/upperFirst';
 import {Form, Button, Field, InputField, CheckboxField, FieldList} from '@steroidsjs/core/ui/form';
+import Detail from '@steroidsjs/core/ui/list/Detail';
 import {bem} from '@steroidsjs/core/hoc';
 
 import './EnumView.scss';
 
-const FORM_ID = 'EnumCreatorView';
+const getFormId = props => ['EnumView', props.entity.namespace, props.entity.name || ''].join('_');
 
 @connect(
-    state => {
-        const values = formValueSelector(FORM_ID)(state, 'isCustomValues', 'items');
+    (state, props) => {
+        const formValues = getFormValues(getFormId(props))(state);
         return {
-            isCustomValues: !!values.isCustomValues,
-            hasEnumValues: !!(values.items || []).find(item => item && item.value),
+            formValues,
+            hasEnumValues: !!(_get(formValues, 'items') || []).find(item => item && item.value),
         };
     }
 )
@@ -29,8 +30,12 @@ export default class EnumView extends React.PureComponent {
             name: PropTypes.string,
             className: PropTypes.string,
         }),
+        formValues: PropTypes.shape({
+            namespace: PropTypes.string,
+            name: PropTypes.string,
+            isCustomValues: PropTypes.bool,
+        }),
         initialValues: PropTypes.object,
-        isCustomValues: PropTypes.bool,
         hasEnumValues: PropTypes.bool,
         onSubmit: PropTypes.func,
     };
@@ -39,21 +44,32 @@ export default class EnumView extends React.PureComponent {
         const bem = this.props.bem;
         return (
             <div className={bem.block()}>
+                {this.props.formValues && (
+                    <Detail
+                        model='steroids.gii.forms.EnumEntity'
+                        item={{
+                            name: this.props.formValues.namespace + '\\' + _upperFirst(this.props.formValues.name || '...'),
+                        }}
+                        attributes={[
+                            'name',
+                        ]}
+                    />
+                )}
                 <Form
-                    formId={FORM_ID}
-                    action='/api/gii/class-save'
+                    formId={getFormId(this.props)}
                     model='steroids.gii.forms.EnumEntity'
                     layout='default'
                     size='sm'
                     initialValues={this.props.initialValues}
                     onSubmit={this.props.onSubmit}
+                    autoFocus
                 >
                     <div className='row'>
-                        <div className='col-3'>
-                            <Field attribute='namespace'/>
-                        </div>
                         <div className='col-4'>
                             <Field attribute='name'/>
+                        </div>
+                        <div className='col-6'>
+                            <Field attribute='namespace'/>
                         </div>
                     </div>
                     <div className='mt-2'>
@@ -78,7 +94,7 @@ export default class EnumView extends React.PureComponent {
                                 },
                                 {
                                     attribute: 'value',
-                                    visible: this.props.isCustomValues || this.props.hasEnumValues,
+                                    visible: _get(this.props, 'formValues.isCustomValues') || this.props.hasEnumValues,
                                 },
                                 {
                                     attribute: 'label',

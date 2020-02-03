@@ -2,16 +2,16 @@
 
 namespace steroids\gii\controllers;
 
+use steroids\core\base\FormModel;
+use steroids\core\base\Model;
+use steroids\gii\forms\EntityInterface;
+use Yii;
 use steroids\core\helpers\ClassFile;
 use steroids\core\helpers\ModuleHelper;
 use steroids\gii\forms\ModuleEntity;
-use steroids\gii\traits\EntityTrait;
-use Yii;
 use steroids\core\base\Type;
-use steroids\gii\helpers\GiiHelper;
 use steroids\gii\GiiModule;
 use steroids\gii\enums\ClassType;
-use steroids\gii\forms\CrudEntity;
 use steroids\gii\forms\EnumEntity;
 use steroids\gii\forms\FormEntity;
 use steroids\gii\forms\ModelEntity;
@@ -32,7 +32,7 @@ class GiiController extends Controller
                 'accessCheck' => [GiiModule::class, 'accessCheck'],
                 'items' => [
                     'init' => '/api/gii/init',
-                    'entity' => '/api/gii/entities/<type>/<namespace>/<name>',
+                    'entity' => 'GET,POST /api/gii/entities/<type>',
                     'api-get-entities' => '/api/gii/get-entities',
                     'api-class-save' => '/api/gii/class-save',
                     'api-get-permissions' => '/api/gii/get-permissions',
@@ -85,8 +85,10 @@ class GiiController extends Controller
         }
         foreach ($groupedModules as $applicationLabel => $modules) {
             $applications[] = [
+                'id' => 'app-' . $applicationLabel,
                 'type' => 'application',
                 'label' => $applicationLabel,
+                'itemsType' => $applicationLabel === 'backend' ? ClassType::MODULE : null,
                 'items' => array_map(
                     function (ClassFile $module) use ($entityTypes) {
                         $items = [];
@@ -94,6 +96,7 @@ class GiiController extends Controller
                         foreach ($entityTypes as $entityType) {
                             $entities = [];
 
+                            $entityNamespace = $module->namespace . '\\' . str_replace('/', '\\', $entityType['dir']);
                             $classFiles = ModuleHelper::findModuleClasses($module, $entityType['type'], $entityType['dir']);
                             foreach ($classFiles as $classFile) {
                                 $entity = $entityType['className']::findOne($classFile);
@@ -102,27 +105,36 @@ class GiiController extends Controller
                                 }
                             }
 
-                            if (count($entities) > 0) {
-                                $items[] = [
-                                    'type' => 'directory',
-                                    'label' => $entityType['label'],
-                                    'items' => array_map(
-                                        function ($entity) use ($entityType) {
-                                            return [
-                                                'type' => $entityType['type'],
-                                                'label' => $entity->classFile->name,
-                                                'namespace' => $entity->classFile->namespace,
-                                                'className' => $entity->classFile->className,
-                                                'name' => $entity->classFile->name,
-                                            ];
-                                        },
-                                        $entities
-                                    ),
-                                ];
-                            }
+                            $typeItems = array_map(
+                                function (EntityInterface $entity) use ($entityType) {
+                                    return [
+                                        'id' =>str_replace('\\', '-',  $entity->classFile->className),
+                                        'type' => $entityType['type'],
+                                        'label' => $entity->classFile->name,
+                                        'namespace' => $entity->classFile->namespace,
+                                        'className' => $entity->classFile->className,
+                                        'name' => $entity->classFile->name,
+                                    ];
+                                },
+                                $entities
+                            );
+                            ArrayHelper::multisort($typeItems, 'label');
+
+                            $items[] = [
+                                'id' => 'module-' . $module->moduleId . '-' . $entityType['label'],
+                                'type' => 'directory',
+                                'itemsType' => $entityType['type'],
+                                'itemsParams' => [
+                                    'namespace' => $entityNamespace,
+                                ],
+                                'label' => $entityType['label'],
+                                'items' => $typeItems,
+                            ];
                         }
 
+                        ArrayHelper::multisort($items, 'label');
                         return [
+                            'id' => 'module-' . $module->moduleId,
                             'type' => 'module',
                             'label' => $module->moduleId,
                             'moduleId' => $module->moduleId,
@@ -171,25 +183,40 @@ class GiiController extends Controller
         ];
     }
 
-    public function actionEntity($type, $namespace, $name)
+    public function actionEntity($type)
     {
-        /** @var EnumEntity|FormEntity|ModelEntity|ModuleEntity $entityClass */
+        /** @var EntityInterface|FormModel $entityClass */
         $entityClass = ClassType::getEntityClass($type);
+        $data = Yii::$app->request->isPost ? Yii::$app->request->post() : Yii::$app->request->get();
 
-        $namespace = str_replace('-', '\\', $namespace);
-        $className = $namespace . '\\' . $name;
-        $classFile = class_exists($className)
-            ? ClassFile::createByClass($namespace . '\\' . $name)
-            : ClassFile::createByNamespace($namespace, $name);
+        $classFile = null;
+        switch ($type) {
+            case ClassType::MODEL:
+            case ClassType::FORM:
+            case ClassType::CRUD:
+            case ClassType::ENUM:
+                $id = ArrayHelper::getValue($data, 'id', '');
+                $namespace = ArrayHelper::getValue($data, 'namespace', '');
+                $name = ArrayHelper::getValue($data, 'name', '');
+                $className = $namespace && $name ? $namespace . '\\' . ucfirst($name) : $id;
+                if ($className) {
+                    $className = str_replace('-', '\\', $className);
+                    $classFile = ClassFile::createByClass($className, $type);
+                    $classFile->type = $type;
+                }
+                break;
 
-        $entity = class_exists($className)
-            ? $entityClass::findOne($classFile)
-            : new $entityClass([
-                'classFile' => $classFile,
-                'namespace' => $classFile->namespace,
-                'name' => $classFile->name,
-            ]);
+            case ClassType::MODULE:
+                break;
+
+            default:
+                throw new BadRequestHttpException('Wrong type: ' . $type);
+        }
+
+        $entity = null;
         if (Yii::$app->request->isPost) {
+            $entity = $entityClass::findOrCreate($classFile);
+            $entity->attributes = $data;
             switch ($type) {
                 case ClassType::MODEL:
                 case ClassType::FORM:
@@ -206,13 +233,12 @@ class GiiController extends Controller
             if ($entity->load(\Yii::$app->request->post())) {
                 $entity->save();
             }
+        } elseif ($classFile) {
+            $entity = $entityClass::findOne($classFile);
         }
 
         return $entity;
     }
-
-
-
 
 
     public function actionApiGetPermissions()

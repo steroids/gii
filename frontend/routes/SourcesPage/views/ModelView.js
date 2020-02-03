@@ -6,19 +6,20 @@ import {Form, AutoCompleteField, Button, Field, DropDownField, FieldList} from '
 import _get from 'lodash/get';
 import _some from 'lodash/some';
 import {bem} from '@steroidsjs/core/hoc';
+import _upperFirst from 'lodash-es/upperFirst';
 
 import ClassType from 'enums/ClassType';
 import ModelAttributeRow from './ModelAttributeRow';
 import ModelRelationRow from './ModelRelationRow';
 
 import './ModelView.scss';
-import InputField from '../../../../../react/ui/form/InputField';
+import Detail from '@steroidsjs/core/ui/list/Detail';
 
-const FORM_ID = 'ModelView';
+const getFormId = props => ['ModelView', props.entity.namespace, props.entity.name || ''].join('_');
 
 @connect(
-    state => ({
-        formValues: getFormValues(FORM_ID)(state),
+    (state, props) => ({
+        formValues: getFormValues(getFormId(props))(state),
     })
 )
 @bem('ModelView')
@@ -58,23 +59,32 @@ export default class ModelView extends React.PureComponent {
         const bem = this.props.bem;
         return (
             <div className={bem.block()}>
+                {this.props.formValues && (
+                    <Detail
+                        model='steroids.gii.forms.ModelEntity'
+                        item={{
+                            name: this.props.formValues.namespace + '\\' + _upperFirst(this.props.formValues.name || '...'),
+                        }}
+                        attributes={[
+                            'name',
+                        ]}
+                    />
+                )}
                 <Form
-                    formId={FORM_ID}
+                    formId={getFormId(this.props)}
                     model='steroids.gii.forms.ModelEntity'
                     layout='default'
                     size='sm'
                     initialValues={this.props.initialValues}
                     onSubmit={this.props.onSubmit}
+                    autoFocus
                 >
                     <div className='row'>
-                        <div className='col-3'>
-                            <Field
-                                attribute='namespace'
-                                component={InputField}
-                            />
-                        </div>
                         <div className='col-4'>
                             <Field attribute='name'/>
+                        </div>
+                        <div className='col-6'>
+                            <Field attribute='namespace'/>
                         </div>
                         {this.props.classType === ClassType.MODEL && (
                             <div className='col-4'>
@@ -113,7 +123,7 @@ export default class ModelView extends React.PureComponent {
                                     const hasFilled = _some(Object.keys(item.params), key => !!_get(this.props.formValues, params.prefix + '.' + key));
                                     if (!hasFilled) {
                                         this.props.dispatch(Object.keys(item.params).map(key => {
-                                            return change(FORM_ID, params.prefix + '.' + key, item.params[key]);
+                                            return change(getFormId(this.props), params.prefix + '.' + key, item.params[key]);
                                         }));
                                     }
                                 },

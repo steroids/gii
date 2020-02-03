@@ -1,5 +1,6 @@
 require('../../react/webpack')
     .config({
+        port: 9992,
         sourcePath: __dirname,
         staticPath: '',
         baseUrl: '',

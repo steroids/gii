@@ -22,7 +22,7 @@ use yii\helpers\ArrayHelper;
  * @property-read ModelRelationEntity[] $relationItems
  * @property-read ModelRelationEntity[] $publicRelationItems
  */
-class ModelEntity extends ModelEntityMeta
+class ModelEntity extends ModelEntityMeta implements EntityInterface
 {
     use EntityTrait;
 
@@ -52,7 +52,16 @@ class ModelEntity extends ModelEntityMeta
         if (!is_subclass_of($className, Model::class)) {
             return null;
         }
+        return static::findOrCreate($classFile);
+    }
 
+    /**
+     * @param ClassFile $classFile
+     * @return static
+     * @throws \ReflectionException
+     */
+    public static function findOrCreate(ClassFile $classFile)
+    {
         $entity = new static();
         $entity->name = $classFile->name;
         $entity->namespace = $classFile->namespace;
@@ -62,7 +71,7 @@ class ModelEntity extends ModelEntityMeta
 
         /** @var Model $className */
         $className = $classFile->className;
-        if ($className instanceof Model) {
+        if (class_exists($className) && is_subclass_of($className, Model::class)) {
             $entity->tableName = $className::tableName();
             $entity->populateRelation('attributeItems', ModelAttributeEntity::findAll($entity));
             $entity->populateRelation('relationItems', ModelRelationEntity::findAll($entity));
@@ -87,6 +96,18 @@ class ModelEntity extends ModelEntityMeta
         return false;
     }
 
+    /**
+     * @inheritDoc
+     */
+    public function rules()
+    {
+        return [
+            ['name', 'filter', 'filter' => function ($value) {
+                return ucfirst($value);
+            }],
+        ];
+    }
+
     public function fields()
     {
         return [
@@ -107,30 +128,24 @@ class ModelEntity extends ModelEntityMeta
     {
         if ($this->validate()) {
             $prevModelEntity = class_exists($this->getClassName())
-                ? static::findOne(ClassFile::createByClass($this->getClassName()))
+                ? static::findOne($this->classFile)
                 : null;
 
             // Lazy create module
             ModuleEntity::autoCreateForEntity($this);
 
             // Create/update meta information
-            GiiHelper::renderFile('model/meta', $this->getMetaPath(), [
+            GiiHelper::renderFile('model/meta', $this->classFile->metaPath, [
                 'modelEntity' => $this,
             ]);
             \Yii::$app->session->addFlash('success', 'Meta  info model ' . $this->name . 'Meta updated');
 
             // Create model, if not exists
-            if (!file_exists($this->getPath())) {
-                GiiHelper::renderFile('model/model', $this->getPath(), [
+            if (!file_exists($this->classFile->path)) {
+                GiiHelper::renderFile('model/model', $this->classFile->path, [
                     'modelEntity' => $this,
                 ]);
                 \Yii::$app->session->addFlash('success', 'Added model ' . $this->name);
-            }
-
-            if (GiiModule::getInstance()->generateJsMeta) {
-                GiiHelper::renderFile('model/meta_js', $this->getMetaJsPath(), [
-                    'modelEntity' => $this,
-                ]);
             }
 
             // Create migration
@@ -162,21 +177,6 @@ class ModelEntity extends ModelEntityMeta
     public function getClassName()
     {
         return $this->classFile->className;
-    }
-
-    public function getPath()
-    {
-        return "{$this->classFile->moduleDir}/models/{$this->classFile->name}.php";
-    }
-
-    public function getMetaPath()
-    {
-        return "{$this->classFile->moduleDir}/models/meta/{$this->classFile->name}Meta.php";
-    }
-
-    public function getMetaJsPath()
-    {
-        return "{$this->classFile->moduleDir}/models/meta/{$this->classFile->name}Meta.js";
     }
 
     /**
@@ -239,7 +239,7 @@ class ModelEntity extends ModelEntityMeta
                 }
 
                 if ($key === 'enumClassName') {
-                    $enumEntity = EnumEntity::findOne(ClassFile::createByClass($value));
+                    $enumEntity = EnumEntity::findOne(ClassFile::createByClass($value, ClassFile::TYPE_ENUM));
                     $meta[$name][$key] = new ValueExpression($enumEntity->name . '::class');
                     $useClasses[] = $enumEntity->getClassName();
                 }
@@ -292,16 +292,6 @@ class ModelEntity extends ModelEntityMeta
         }
 
         return $result;
-    }
-
-    /**
-     * @param string $indent
-     * @param array $import
-     * @return mixed|string
-     */
-    public function renderJsFields($indent = '', &$import = [])
-    {
-        return $this->jsExport($this->getJsFields(false, true), $indent, $import);
     }
 
     /**

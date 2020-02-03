@@ -6,13 +6,12 @@ use steroids\core\base\Enum;
 use steroids\core\helpers\ClassFile;
 use steroids\gii\enums\ClassType;
 use steroids\gii\forms\meta\EnumEntityMeta;
-use steroids\gii\GiiModule;
 use steroids\gii\helpers\GiiHelper;
 use steroids\gii\models\ValueExpression;
 use steroids\gii\traits\EntityTrait;
 use yii\helpers\ArrayHelper;
 
-class EnumEntity extends EnumEntityMeta
+class EnumEntity extends EnumEntityMeta implements EntityInterface
 {
     use EntityTrait;
 
@@ -36,6 +35,11 @@ class EnumEntity extends EnumEntityMeta
         return $items;
     }
 
+    /**
+     * @param ClassFile $classFile
+     * @return static|null
+     * @throws \ReflectionException
+     */
     public static function findOne(ClassFile $classFile)
     {
         $className = $classFile->className;
@@ -43,13 +47,37 @@ class EnumEntity extends EnumEntityMeta
             return null;
         }
 
+        return static::findOrCreate($classFile);
+    }
+
+    /**
+     * @param ClassFile $classFile
+     * @return static
+     * @throws \ReflectionException
+     */
+    public static function findOrCreate(ClassFile $classFile)
+    {
         $entity = new static([
             'classFile' => $classFile,
             'namespace' => $classFile->namespace,
             'name' => $classFile->name,
         ]);
-        $entity->populateRelation('items', EnumItemEntity::findAll($entity));
+        if (class_exists($classFile->className)) {
+            $entity->populateRelation('items', EnumItemEntity::findAll($entity));
+        }
         return $entity;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function rules()
+    {
+        return [
+            ['name', 'filter', 'filter' => function ($value) {
+                return ucfirst($value);
+            }],
+        ];
     }
 
     public function fields()
@@ -57,7 +85,7 @@ class EnumEntity extends EnumEntityMeta
         return [
             'namespace',
             'name',
-            'className' => function(EnumEntity $entity) {
+            'className' => function (EnumEntity $entity) {
                 return $entity->classFile->className;
             },
             'customColumns',
@@ -72,19 +100,14 @@ class EnumEntity extends EnumEntityMeta
             ModuleEntity::autoCreateForEntity($this);
 
             // Create/update meta information
-            GiiHelper::renderFile('enum/meta', $this->getMetaPath(), [
+            GiiHelper::renderFile('enum/meta', $this->classFile->metaPath, [
                 'enumEntity' => $this,
             ]);
-            if (GiiModule::getInstance()->generateJsMeta) {
-                GiiHelper::renderFile('enum/meta_js', $this->getMetaJsPath(), [
-                    'enumEntity' => $this,
-                ]);
-            }
             \Yii::$app->session->addFlash('success', 'Meta info enum ' . $this->classFile->name . 'Meta updated');
 
             // Create enum, if not exists
-            if (!file_exists($this->getPath())) {
-                GiiHelper::renderFile('enum/enum', $this->getPath(), [
+            if (!file_exists($this->classFile->path)) {
+                GiiHelper::renderFile('enum/enum', $this->classFile->path, [
                     'enumEntity' => $this,
                 ]);
                 \Yii::$app->session->addFlash('success', 'Added enum ' . $this->classFile->name);
@@ -98,21 +121,6 @@ class EnumEntity extends EnumEntityMeta
     public function getClassName()
     {
         return $this->classFile->className;
-    }
-
-    public function getPath()
-    {
-        return "{$this->classFile->moduleDir}/enums/{$this->classFile->name}.php";
-    }
-
-    public function getMetaPath()
-    {
-        return "{$this->classFile->moduleDir}/enums/meta/{$this->classFile->name}Meta.php";
-    }
-
-    public function getMetaJsPath()
-    {
-        return "{$this->classFile->moduleDir}/enums/meta/{$this->classFile->name}Meta.js";
     }
 
     /**

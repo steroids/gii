@@ -119,7 +119,7 @@ class ModelRelationEntity extends ModelRelationEntityMeta
      */
     public function getRelationModelEntry()
     {
-        return ModelEntity::findOne(ClassFile::createByClass($this->relationModel));
+        return ModelEntity::findOne(ClassFile::createByClass($this->relationModel, ClassFile::TYPE_MODEL));
     }
 
     /**

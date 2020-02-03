@@ -18,6 +18,7 @@ import './Layout.scss';
             'steroids.gii.forms.ModelEntity',
             'steroids.gii.forms.ModelAttributeEntity',
             'steroids.gii.forms.ModelRelationEntity',
+            'steroids.gii.forms.ModuleEntity',
         ],
         enums: [
             'steroids.gii.enums.RelationType',

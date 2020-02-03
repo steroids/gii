@@ -21,9 +21,9 @@ abstract class ModuleEntityMeta extends FormModel
     {
         return [
             'id' => [
-                'label' => Yii::t('steroids', 'Namespace'),
-                'required' => true
-            ],
+                'label' => Yii::t('steroids', 'Module Id'),
+                'isRequired' => true
+            ]
         ];
     }
 }

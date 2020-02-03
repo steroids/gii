@@ -5,7 +5,7 @@
   min-height: calc(100vh - 39px);
 
   &__tree {
-    height: 100%;
+    min-height: 100%;
     background-color: #383b3d;
 
     .TreeView {
@@ -49,5 +49,19 @@
   .AutoCompleteFieldView__drop-down {
     width: auto;
     max-width: 300px;
+  }
+
+  &__tree-wrapper, &__content-wrapper {
+    &::-webkit-scrollbar
+    {
+      width: 10px;
+      background-color: #383b3d;
+    }
+    &::-webkit-scrollbar-thumb
+    {
+      border: solid 2px #383b3d;
+      border-radius: 10px;
+      background-color: $gray-700;
+    }
   }
 }

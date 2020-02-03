@@ -14,6 +14,6 @@ class FormRelationEntity extends ModelRelationEntity
      */
     public function getRelationModelEntry()
     {
-        return FormEntity::findOne(ClassFile::createByClass($this->relationModel));
+        return FormEntity::findOne(ClassFile::createByClass($this->relationModel, ClassFile::TYPE_FORM));
     }
 }

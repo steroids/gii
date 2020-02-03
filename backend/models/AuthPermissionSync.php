@@ -2,8 +2,8 @@
 
 namespace steroids\gii\models;
 
-use steroids\components\AuthManager;
-use steroids\components\SiteMapItem;
+use steroids\core\components\AuthManager;
+use steroids\core\components\SiteMapItem;
 use steroids\gii\forms\ModelEntity;
 use yii\base\BaseObject;
 use yii\helpers\ArrayHelper;

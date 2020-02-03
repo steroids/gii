@@ -5,6 +5,8 @@ import Tree from '@steroidsjs/core/ui/nav/Tree';
 import {connect} from 'react-redux';
 import _get from 'lodash/get';
 import _isEqual from 'lodash/isEqual';
+import _isEmpty from 'lodash/isEmpty';
+import queryString from 'query-string';
 import {goToPage} from '@steroidsjs/core/actions/navigation';
 import Loader from '@steroidsjs/core/ui/layout/Loader';
 
@@ -14,6 +16,9 @@ import ClassType from '../../enums/ClassType';
 import ModelView from './views/ModelView';
 
 import './SourcesPage.scss';
+import SourceTreeView from './views/SourceTreeView';
+import {reInit} from '../../../../_npm/@steroidsjs/core/actions/auth';
+import ModuleView from './views/ModuleView';
 
 @connect(
     state => ({
@@ -30,6 +35,7 @@ export default class SourcesPage extends React.PureComponent {
     constructor() {
         super(...arguments);
 
+        this._onTreeClick = this._onTreeClick.bind(this);
         this._onEntitySubmit = this._onEntitySubmit.bind(this);
 
         this.state = {
@@ -44,10 +50,14 @@ export default class SourcesPage extends React.PureComponent {
         const prevParams = _get(prevProps, 'match.params');
         const params = _get(this.props, 'match.params');
         if (!_isEqual(prevParams, params)) {
-            const state = this._fetchEntity();
-            if (state) {
-                this.setState(state);
-            }
+            this.setState({
+                entity: null, // Force destroy Form
+            }, () => {
+                const state = this._fetchEntity();
+                if (state) {
+                    this.setState(state);
+                }
+            });
         }
 
         if (prevProps.applications !== this.props.applications) {
@@ -58,6 +68,10 @@ export default class SourcesPage extends React.PureComponent {
     }
 
     render() {
+        if (!this.props.types) {
+            return null;
+        }
+
         const bem = this.props.bem;
         return (
             <div className={bem.block()}>
@@ -69,20 +83,15 @@ export default class SourcesPage extends React.PureComponent {
                         minWidth='200px'
                         width='300px'
                         overflow='auto'
+                        className={bem.element('tree-wrapper')}
                     >
                         <div className={bem.element('tree')}>
                             <Tree
                                 id='source'
                                 items={this.props.applications}
-                                onItemClick={(e, item) => {
-                                    if (item.namespace && item.name) {
-                                        this.props.dispatch(goToPage(ROUTE_SOURCES, {
-                                            type: item.type,
-                                            namespace: item.namespace.replace(/\\/g, '-'),
-                                            name: item.name,
-                                        }));
-                                    }
-                                }}
+                                selectedItemId={this.props.match.params.id}
+                                onItemClick={this._onTreeClick}
+                                view={SourceTreeView}
                                 autoSave
                             />
                         </div>
@@ -90,13 +99,14 @@ export default class SourcesPage extends React.PureComponent {
                     <ResizeHorizon
                         minWidth='600px'
                         overflow='auto'
+                        className={bem.element('content-wrapper')}
                     >
                         <div className={bem.element('content')}>
                             {this.state.isLoading && (
                                 <Loader/>
-                            ) || (this.state.entity && (
+                            ) || (
                                 this.renderEntity()
-                            ))}
+                            )}
                         </div>
                     </ResizeHorizon>
                 </Resize>
@@ -105,30 +115,49 @@ export default class SourcesPage extends React.PureComponent {
     }
 
     renderEntity() {
-        const viewsMap = {
-            [ClassType.ENUM]: EnumView,
-            [ClassType.FORM]: ModelView,
-            [ClassType.MODEL]: ModelView,
-        };
-        const EntityView = viewsMap[this.props.match.params.type];
-        if (EntityView) {
-            return (
-                <EntityView
-                    entity={this.state.entity}
-                    initialValues={{
-                        namespace: this.props.match.params.namespace,
-                        name: this.props.match.params.name,
-                        ...this.state.entity,
-                    }}
-                    types={this.props.types}
-                    classesByType={this.state.classesByType}
-                    classType={this.props.match.params.type}
-                    onSubmit={this._onEntitySubmit}
-                />
-            );
+        if (!this.state.entity) {
+            return null;
+        }
+
+        const type = this.props.match.params.type;
+        switch (type) {
+            case ClassType.MODULE:
+            case ClassType.MODEL:
+            case ClassType.FORM:
+            case ClassType.ENUM:
+                const viewsMap = {
+                    [ClassType.MODULE]: ModuleView,
+                    [ClassType.MODEL]: ModelView,
+                    [ClassType.FORM]: ModelView,
+                    [ClassType.ENUM]: EnumView,
+                };
+                const EntityView = viewsMap[this.props.match.params.type];
+                return (
+                    <EntityView
+                        entity={this.state.entity}
+                        initialValues={{
+                            ...this.state.entity,
+                        }}
+                        types={this.props.types}
+                        classesByType={this.state.classesByType}
+                        classType={type}
+                        onSubmit={this._onEntitySubmit}
+                    />
+                );
+                break;
+
         }
 
         return null;
+    }
+
+    _onTreeClick(e, item) {
+        if (!item.items && item.id) {
+            this.props.dispatch(goToPage(ROUTE_SOURCES, {
+                type: item.type,
+                id: item.id.replace(/\\/g, '-'),
+            }));
+        }
     }
 
     _extractClasses(items) {
@@ -147,27 +176,47 @@ export default class SourcesPage extends React.PureComponent {
     }
 
     _fetchEntity() {
-        const params = _get(this.props, 'match.params');
-        if (params.type && params.namespace && params.name) {
-            this.props.http.get(`/api/gii/entities/${params.type}/${params.namespace}/${params.name}`)
-                .then(entity => {
-                    this.setState({
-                        entity,
+        const {type, id} = _get(this.props, 'match.params');
+        if (type) {
+            if (ClassType.getKeys().includes(type)) {
+                if (id) {
+                    this.props.http.get(`/api/gii/entities/${type}`, {id})
+                        .then(entity => {
+                            this.setState({
+                                entity,
+                                isLoading: false,
+                            });
+                        });
+                } else if (this.props.location.search.length > 1) {
+                    return {
+                        entity: queryString.parse(this.props.location.search.substr(1)),
                         isLoading: false,
-                    });
-                });
-            return {isLoading: true};
+                    };
+                }
+            }
+            return null;
         }
+        return {
+            isLoading: true,
+        };
     }
 
     _onEntitySubmit(values) {
-        let {type, namespace, name} = _get(this.props, 'match.params');
-        name = name || values.name;
+        const {type, id} = _get(this.props, 'match.params');
+        if (type && !_isEmpty(values)) {
+            this.props.http.post(`/api/gii/entities/${type}`, {
+                ...values,
+                id,
+            })
+                .then(entity => {
+                    this.props.dispatch(goToPage(ROUTE_SOURCES, {
+                        type: entity.id ? type : null,
+                        id: entity.id || null,
+                    }));
 
-        this.props.http.post(`/api/gii/entities/${type}/${namespace}/${name}`, values)
-            .then(entity => {
-                console.log(123, entity);
-            });
+                    this.props.dispatch(reInit());
+                });
+        }
     }
 
 }

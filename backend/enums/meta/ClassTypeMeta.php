@@ -11,14 +11,16 @@ abstract class ClassTypeMeta extends Enum
     const FORM = 'form';
     const ENUM = 'enum';
     const CRUD = 'crud';
+    const MODULE = 'module';
 
     public static function getLabels()
     {
         return [
-            self::MODEL => Yii::t('steroids', 'Model ActiveRecord'),
-            self::FORM => Yii::t('steroids', 'Model Form'),
-            self::ENUM => Yii::t('steroids', 'Enum'),
-            self::CRUD => Yii::t('steroids', 'Crud Controller'),
+            self::MODEL => Yii::t('app', 'Model ActiveRecord'),
+            self::FORM => Yii::t('app', 'Model Form'),
+            self::ENUM => Yii::t('app', 'Enum'),
+            self::CRUD => Yii::t('app', 'Crud Controller'),
+            self::MODULE => Yii::t('app', 'Module')
         ];
     }
 
@@ -28,7 +30,7 @@ abstract class ClassTypeMeta extends Enum
             self::MODEL => 'models',
             self::FORM => 'forms',
             self::ENUM => 'enums',
-            self::CRUD => 'controllers',
+            self::CRUD => 'controllers'
         ];
     }
 

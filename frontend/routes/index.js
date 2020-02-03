@@ -19,7 +19,7 @@ export default {
     items: {
         [ROUTE_SOURCES]: {
             exact: true,
-            path: '/sources/:type?/:namespace?/:name?',
+            path: '/sources/:type?/:id?',
             title: __('Исходники'),
             layout: 'blank',
             roles,

@@ -51,14 +51,14 @@ class CrudEntity extends CrudEntityMeta
             ModuleEntity::autoCreateForEntity($this);
 
             // Create/update meta information
-            GiiHelper::renderFile('crud/meta', $this->getMetaPath(), [
+            GiiHelper::renderFile('crud/meta', $this->classFile->metaPath, [
                 'crudEntity' => $this,
             ]);
             \Yii::$app->session->addFlash('success', 'Meta info ' . $this->classFile->name . 'Meta updated');
 
             // Create controller, if not exists
-            if (!file_exists($this->getPath())) {
-                GiiHelper::renderFile('crud/controller', $this->getPath(), [
+            if (!file_exists($this->classFile->path)) {
+                GiiHelper::renderFile('crud/controller', $this->classFile->path, [
                     'crudEntity' => $this,
                 ]);
                 \Yii::$app->session->addFlash('success', 'Added controller ' . $this->classFile->name);
@@ -72,11 +72,6 @@ class CrudEntity extends CrudEntityMeta
     public function getPath()
     {
         return "{$this->classFile->moduleDir}/controllers/{$this->classFile->name}.php";
-    }
-
-    public function getMetaPath()
-    {
-        return "{$this->classFile->moduleDir}/controllers/meta/{$this->classFile->name}Meta.php";
     }
 
     public function getControllerId()
