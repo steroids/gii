@@ -1,7 +1,7 @@
 <?php
 
 namespace steroids\gii\models;
-use steroids\gii\forms\ModelAttributeEntity;
+use steroids\gii\forms\BackendModelAttributeEntity;
 
 /**
  * Trait MigrationPostgresTrait
@@ -11,8 +11,8 @@ trait MigrationPostgresTrait
 {
     /**
      * Add single command if it's needed to change 'required' property on Postgres
-     * @param ModelAttributeEntity $prev
-     * @param ModelAttributeEntity $next
+     * @param BackendModelAttributeEntity $prev
+     * @param BackendModelAttributeEntity $next
      * @throws \yii\base\NotSupportedException
      */
     protected function postgresProcessUpdate($prev, $next)
@@ -26,8 +26,8 @@ trait MigrationPostgresTrait
     }
 
     /**
-     * @param ModelAttributeEntity $prev
-     * @param ModelAttributeEntity $next
+     * @param BackendModelAttributeEntity $prev
+     * @param BackendModelAttributeEntity $next
      */
     protected function postgresProcessDefaultValue($prev, $next)
     {
@@ -46,8 +46,8 @@ trait MigrationPostgresTrait
     }
 
     /**
-     * @param ModelAttributeEntity $prev
-     * @param ModelAttributeEntity $next
+     * @param BackendModelAttributeEntity $prev
+     * @param BackendModelAttributeEntity $next
      */
     protected function postgresProcessNotNull($prev, $next)
     {

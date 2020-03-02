@@ -2,12 +2,12 @@
 
 namespace app\views;
 
-use steroids\gii\forms\ModelEntity;
+use steroids\gii\forms\BackendModelEntity;
 use steroids\gii\models\MigrationMethods;
 
 /* @var $name string */
 /* @var $namespace string */
-/* @var $modelEntity ModelEntity */
+/* @var $modelEntity BackendModelEntity */
 /* @var $migrationMethods MigrationMethods */
 
 echo "<?php\n";

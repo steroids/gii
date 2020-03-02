@@ -5,27 +5,27 @@ namespace steroids\gii\forms;
 use steroids\core\base\Model;
 use steroids\core\helpers\ClassFile;
 use steroids\gii\enums\RelationType;
-use steroids\gii\forms\meta\ModelRelationEntityMeta;
+use steroids\gii\forms\meta\BackendModelRelationEntityMeta;
 use yii\db\ActiveQuery;
 
 /**
  * @property-read boolean $isHasOne
  * @property-read boolean $isHasMany
  * @property-read boolean $isManyMany
- * @property-read ModelEntity $relationModelEntry
- * @property-read ModelAttributeEntity $viaRelationAttributeEntry
- * @property-read ModelAttributeEntity $viaSelfAttributeEntry
+ * @property-read BackendModelEntity $relationModelEntry
+ * @property-read BackendModelAttributeEntity $viaRelationAttributeEntry
+ * @property-read BackendModelAttributeEntity $viaSelfAttributeEntry
  * @property-read bool $isProtected
  */
-class ModelRelationEntity extends ModelRelationEntityMeta
+class BackendModelRelationEntity extends BackendModelRelationEntityMeta
 {
     /**
-     * @var ModelEntity
+     * @var BackendModelEntity
      */
     public $modelEntity;
 
     /**
-     * @param ModelEntity $entity
+     * @param BackendModelEntity $entity
      * @return static[]
      * @throws \ReflectionException
      */
@@ -115,15 +115,15 @@ class ModelRelationEntity extends ModelRelationEntityMeta
     }
 
     /**
-     * @return ModelEntity|null
+     * @return BackendModelEntity|null
      */
     public function getRelationModelEntry()
     {
-        return ModelEntity::findOne(ClassFile::createByClass($this->relationModel, ClassFile::TYPE_MODEL));
+        return BackendModelEntity::findOne(ClassFile::createByClass($this->relationModel, ClassFile::TYPE_MODEL));
     }
 
     /**
-     * @return ModelAttributeEntity|null
+     * @return BackendModelAttributeEntity|null
      */
     public function getViaRelationAttributeEntry()
     {
@@ -131,7 +131,7 @@ class ModelRelationEntity extends ModelRelationEntityMeta
     }
 
     /**
-     * @return ModelAttributeEntity|null
+     * @return BackendModelAttributeEntity|null
      */
     public function getViaSelfAttributeEntry()
     {

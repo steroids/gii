@@ -7,7 +7,7 @@ use steroids\core\base\Model;
 use steroids\core\helpers\ClassFile;
 use steroids\gii\enums\ClassType;
 use steroids\gii\enums\MigrateMode;
-use steroids\gii\forms\meta\ModelEntityMeta;
+use steroids\gii\forms\meta\BackendModelEntityMeta;
 use steroids\gii\GiiModule;
 use steroids\gii\helpers\GiiHelper;
 use steroids\gii\models\MigrationMethods;
@@ -17,12 +17,12 @@ use steroids\core\types\RelationType;
 use yii\helpers\ArrayHelper;
 
 /**
- * @property-read ModelAttributeEntity[] $attributeItems
- * @property-read ModelAttributeEntity[] $publicAttributeItems
- * @property-read ModelRelationEntity[] $relationItems
- * @property-read ModelRelationEntity[] $publicRelationItems
+ * @property-read BackendModelAttributeEntity[] $attributeItems
+ * @property-read BackendModelAttributeEntity[] $publicAttributeItems
+ * @property-read BackendModelRelationEntity[] $relationItems
+ * @property-read BackendModelRelationEntity[] $publicRelationItems
  */
-class ModelEntity extends ModelEntityMeta implements EntityInterface
+class BackendModelEntity extends BackendModelEntityMeta implements EntityInterface
 {
     use EntityTrait;
 
@@ -73,8 +73,8 @@ class ModelEntity extends ModelEntityMeta implements EntityInterface
         $className = $classFile->className;
         if (class_exists($className) && is_subclass_of($className, Model::class)) {
             $entity->tableName = $className::tableName();
-            $entity->populateRelation('attributeItems', ModelAttributeEntity::findAll($entity));
-            $entity->populateRelation('relationItems', ModelRelationEntity::findAll($entity));
+            $entity->populateRelation('attributeItems', BackendModelAttributeEntity::findAll($entity));
+            $entity->populateRelation('relationItems', BackendModelRelationEntity::findAll($entity));
         }
 
         return $entity;
@@ -113,7 +113,7 @@ class ModelEntity extends ModelEntityMeta implements EntityInterface
         return [
             'namespace',
             'name',
-            'className' => function(ModelEntity $entity) {
+            'className' => function(BackendModelEntity $entity) {
                 return $entity->classFile->className;
             },
             'tableName',
@@ -132,7 +132,7 @@ class ModelEntity extends ModelEntityMeta implements EntityInterface
                 : null;
 
             // Lazy create module
-            ModuleEntity::autoCreateForEntity($this);
+            BackendModuleEntity::autoCreateForEntity($this);
 
             // Create/update meta information
             GiiHelper::renderFile('model/meta', $this->classFile->metaPath, [
@@ -181,7 +181,7 @@ class ModelEntity extends ModelEntityMeta implements EntityInterface
 
     /**
      * @param string $name
-     * @return null|ModelAttributeEntity
+     * @return null|BackendModelAttributeEntity
      */
     public function getAttributeEntity($name)
     {
@@ -195,7 +195,7 @@ class ModelEntity extends ModelEntityMeta implements EntityInterface
 
     /**
      * @param string $name
-     * @return null|ModelRelationEntity
+     * @return null|BackendModelRelationEntity
      */
     public function getRelationEntity($name)
     {
@@ -209,14 +209,14 @@ class ModelEntity extends ModelEntityMeta implements EntityInterface
 
     public function getPublicAttributeItems()
     {
-        return array_filter($this->attributeItems, function (ModelAttributeEntity $item) {
+        return array_filter($this->attributeItems, function (BackendModelAttributeEntity $item) {
             return !$item->isProtected;
         });
     }
 
     public function getPublicRelationItems()
     {
-        return array_filter($this->relationItems, function (ModelRelationEntity $item) {
+        return array_filter($this->relationItems, function (BackendModelRelationEntity $item) {
             return !$item->isProtected;
         });
     }
@@ -239,7 +239,7 @@ class ModelEntity extends ModelEntityMeta implements EntityInterface
                 }
 
                 if ($key === 'enumClassName') {
-                    $enumEntity = EnumEntity::findOne(ClassFile::createByClass($value, ClassFile::TYPE_ENUM));
+                    $enumEntity = BackendBackendEnumEntity::findOne(ClassFile::createByClass($value, ClassFile::TYPE_ENUM));
                     $meta[$name][$key] = new ValueExpression($enumEntity->name . '::class');
                     $useClasses[] = $enumEntity->getClassName();
                 }
@@ -390,7 +390,7 @@ class ModelEntity extends ModelEntityMeta implements EntityInterface
     }
 
     /**
-     * @param ModelAttributeEntity[] $attributeEntries
+     * @param BackendModelAttributeEntity[] $attributeEntries
      * @param $useClasses
      * @return array
      */
@@ -453,8 +453,8 @@ class ModelEntity extends ModelEntityMeta implements EntityInterface
     }
 
     /**
-     * @param ModelAttributeEntity[] $attributeEntities
-     * @param ModelRelationEntity[] $relationEntities
+     * @param BackendModelAttributeEntity[] $attributeEntities
+     * @param BackendModelRelationEntity[] $relationEntities
      * @param array $useClasses
      * @return array
      */
@@ -517,7 +517,7 @@ class ModelEntity extends ModelEntityMeta implements EntityInterface
     }
 
     /**
-     * @param ModelAttributeEntity[] $attributeEntities
+     * @param BackendModelAttributeEntity[] $attributeEntities
      * @param string $indent
      * @param array $useClasses
      * @return string
@@ -585,7 +585,7 @@ class ModelEntity extends ModelEntityMeta implements EntityInterface
                 continue;
             }
 
-            if ($appType instanceof RelationType && $attributeEntity->modelEntity instanceof ModelEntity && !$appType->giiDbType($attributeEntity)) {
+            if ($appType instanceof RelationType && $attributeEntity->modelEntity instanceof BackendModelEntity && !$appType->giiDbType($attributeEntity)) {
                 $relation = $attributeEntity->modelEntity->getRelationEntity($attributeEntity->relationName);
                 $properties[$attributeEntity->name] = $relation && !$relation->isHasOne ? '[]' : null;
             }

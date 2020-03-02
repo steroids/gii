@@ -5,7 +5,7 @@ namespace steroids\gii\forms\meta;
 use steroids\core\base\FormModel;
 use \Yii;
 
-abstract class EnumItemEntityMeta extends FormModel
+abstract class BackendEnumItemEntityMeta extends FormModel
 {
     public $name;
     public $value;

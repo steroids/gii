@@ -2,9 +2,9 @@
 
 namespace app\views;
 
-use steroids\gii\forms\EnumEntity;
+use steroids\gii\forms\BackendBackendEnumEntity;
 
-/* @var $enumEntity EnumEntity */
+/* @var $enumEntity BackendBackendEnumEntity */
 
 $labels = $enumEntity->renderLabels('        ');
 $cssClasses = $enumEntity->renderCssClasses('        ');

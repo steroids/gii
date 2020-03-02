@@ -3,11 +3,11 @@
 namespace steroids\gii\enums;
 
 use steroids\gii\enums\meta\ClassTypeMeta;
-use steroids\gii\forms\CrudEntity;
-use steroids\gii\forms\EnumEntity;
-use steroids\gii\forms\FormEntity;
-use steroids\gii\forms\ModelEntity;
-use steroids\gii\forms\ModuleEntity;
+use steroids\gii\forms\BackendCrudEntity;
+use steroids\gii\forms\BackendBackendEnumEntity;
+use steroids\gii\forms\BackendFormEntity;
+use steroids\gii\forms\BackendModelEntity;
+use steroids\gii\forms\BackendModuleEntity;
 
 class ClassType extends ClassTypeMeta
 {
@@ -18,11 +18,11 @@ class ClassType extends ClassTypeMeta
     public static function getEntityClass($id)
     {
         $map = [
-            self::MODEL => ModelEntity::class,
-            self::FORM => FormEntity::class,
-            self::ENUM => EnumEntity::class,
-            self::CRUD => CrudEntity::class,
-            self::MODULE => ModuleEntity::class,
+            self::MODEL => BackendModelEntity::class,
+            self::FORM => BackendFormEntity::class,
+            self::ENUM => BackendBackendEnumEntity::class,
+            self::CRUD => BackendCrudEntity::class,
+            self::MODULE => BackendModuleEntity::class,
         ];
         return $map[$id];
     }

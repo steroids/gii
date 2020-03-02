@@ -4,14 +4,14 @@ namespace steroids\gii\forms;
 
 use steroids\core\base\Enum;
 use steroids\gii\enums\ClassType;
-use steroids\gii\forms\meta\EnumItemEntityMeta;
+use steroids\gii\forms\meta\BackendEnumItemEntityMeta;
 use steroids\gii\helpers\GiiHelper;
 use yii\helpers\ArrayHelper;
 
-class EnumItemEntity extends EnumItemEntityMeta
+class BackendEnumItemEntity extends BackendEnumItemEntityMeta
 {
     /**
-     * @param EnumEntity $entity
+     * @param BackendBackendEnumEntity $entity
      * @return static[]
      * @throws \ReflectionException
      */

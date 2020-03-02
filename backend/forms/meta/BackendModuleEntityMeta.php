@@ -5,7 +5,7 @@ namespace steroids\gii\forms\meta;
 use steroids\core\base\FormModel;
 use \Yii;
 
-abstract class ModuleEntityMeta extends FormModel
+abstract class BackendModuleEntityMeta extends FormModel
 {
     public $id;
 

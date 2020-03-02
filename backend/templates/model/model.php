@@ -2,9 +2,9 @@
 
 namespace app\views;
 
-use steroids\gii\forms\ModelEntity;
+use steroids\gii\forms\BackendModelEntity;
 
-/* @var $modelEntity ModelEntity */
+/* @var $modelEntity BackendModelEntity */
 
 echo "<?php\n";
 ?>

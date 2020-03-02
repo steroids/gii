@@ -12,9 +12,9 @@ use yii\db\ActiveQuery;
 use yii\helpers\ArrayHelper;
 
 /**
- * @property-read ModelEntity $queryModelEntity
+ * @property-read BackendModelEntity $queryModelEntity
  */
-class FormEntity extends ModelEntity implements EntityInterface
+class BackendFormEntity extends BackendModelEntity implements EntityInterface
 {
     /**
      * @var ClassFile
@@ -71,8 +71,8 @@ class FormEntity extends ModelEntity implements EntityInterface
                 }
             }
 
-            $entity->populateRelation('relationItems', FormRelationEntity::findAll($entity));
-            $entity->populateRelation('attributeItems', FormAttributeEntity::findAll($entity));
+            $entity->populateRelation('relationItems', BackendFormRelationEntity::findAll($entity));
+            $entity->populateRelation('attributeItems', BackendFormAttributeEntity::findAll($entity));
 
             if (method_exists($searchModel, 'sortFields')) {
                 $sortFields = $searchModel->sortFields();
@@ -89,7 +89,7 @@ class FormEntity extends ModelEntity implements EntityInterface
     {
         if ($this->validate()) {
             // Lazy create module
-            ModuleEntity::autoCreateForEntity($this);
+            BackendModuleEntity::autoCreateForEntity($this);
 
             GiiHelper::renderFile($this->queryModel ? 'form/meta_search' : 'form/meta_form', $this->classFile->metaPath, [
                 'formEntity' => $this,
@@ -116,15 +116,15 @@ class FormEntity extends ModelEntity implements EntityInterface
 
     public function renderRules(&$useClasses = [])
     {
-        return ModelEntity::exportRules($this->publicAttributeItems, $this->publicRelationItems, $useClasses);
+        return BackendModelEntity::exportRules($this->publicAttributeItems, $this->publicRelationItems, $useClasses);
     }
 
     /**
-     * @return ModelEntity|null
+     * @return BackendModelEntity|null
      */
     public function getQueryModelEntity()
     {
-        return $this->queryModel ? ModelEntity::findOne(ClassFile::createByClass($this->queryModel), ClassFile::TYPE_MODEL) : null;
+        return $this->queryModel ? BackendModelEntity::findOne(ClassFile::createByClass($this->queryModel), ClassFile::TYPE_MODEL) : null;
     }
 
     /**
@@ -132,7 +132,7 @@ class FormEntity extends ModelEntity implements EntityInterface
      */
     public function getAttributeItems()
     {
-        return $this->hasMany(FormAttributeEntity::class);
+        return $this->hasMany(BackendFormAttributeEntity::class);
     }
 
     /**
@@ -140,6 +140,6 @@ class FormEntity extends ModelEntity implements EntityInterface
      */
     public function getRelationItems()
     {
-        return $this->hasMany(FormRelationEntity::class);
+        return $this->hasMany(BackendFormRelationEntity::class);
     }
 }

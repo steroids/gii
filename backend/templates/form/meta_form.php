@@ -2,9 +2,9 @@
 
 namespace app\views;
 
-use steroids\gii\forms\FormEntity;
+use steroids\gii\forms\BackendFormEntity;
 
-/* @var $formEntity FormEntity */
+/* @var $formEntity BackendFormEntity */
 
 $useClasses = [];
 if (count($formEntity->publicRelationItems) > 0) {

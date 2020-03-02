@@ -5,13 +5,13 @@ namespace steroids\gii\forms;
 use steroids\core\base\Enum;
 use steroids\core\helpers\ClassFile;
 use steroids\gii\enums\ClassType;
-use steroids\gii\forms\meta\EnumEntityMeta;
+use steroids\gii\forms\meta\BackendEnumEntityMeta;
 use steroids\gii\helpers\GiiHelper;
 use steroids\gii\models\ValueExpression;
 use steroids\gii\traits\EntityTrait;
 use yii\helpers\ArrayHelper;
 
-class EnumEntity extends EnumEntityMeta implements EntityInterface
+class BackendBackendEnumEntity extends BackendEnumEntityMeta implements EntityInterface
 {
     use EntityTrait;
 
@@ -63,7 +63,7 @@ class EnumEntity extends EnumEntityMeta implements EntityInterface
             'name' => $classFile->name,
         ]);
         if (class_exists($classFile->className)) {
-            $entity->populateRelation('items', EnumItemEntity::findAll($entity));
+            $entity->populateRelation('items', BackendEnumItemEntity::findAll($entity));
         }
         return $entity;
     }
@@ -85,7 +85,7 @@ class EnumEntity extends EnumEntityMeta implements EntityInterface
         return [
             'namespace',
             'name',
-            'className' => function (EnumEntity $entity) {
+            'className' => function (BackendBackendEnumEntity $entity) {
                 return $entity->classFile->className;
             },
             'customColumns',
@@ -97,7 +97,7 @@ class EnumEntity extends EnumEntityMeta implements EntityInterface
     {
         if ($this->validate()) {
             // Lazy create module
-            ModuleEntity::autoCreateForEntity($this);
+            BackendModuleEntity::autoCreateForEntity($this);
 
             // Create/update meta information
             GiiHelper::renderFile('enum/meta', $this->classFile->metaPath, [

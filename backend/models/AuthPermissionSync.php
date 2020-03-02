@@ -4,7 +4,7 @@ namespace steroids\gii\models;
 
 use steroids\core\components\AuthManager;
 use steroids\core\components\SiteMapItem;
-use steroids\gii\forms\ModelEntity;
+use steroids\gii\forms\BackendModelEntity;
 use yii\base\BaseObject;
 use yii\helpers\ArrayHelper;
 use yii\rbac\Permission;
@@ -71,7 +71,7 @@ class AuthPermissionSync extends BaseObject
         $addedNames = [];
 
         // Models
-        foreach (ModelEntity::findAll() as $modelClass) {
+        foreach (BackendModelEntity::findAll() as $modelClass) {
             $modelPermission = self::findOrCreate([
                 self::PREFIX_MODEL,
                 $modelClass->className,

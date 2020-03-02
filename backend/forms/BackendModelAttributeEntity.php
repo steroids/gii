@@ -3,19 +3,19 @@
 namespace steroids\gii\forms;
 
 use steroids\core\base\Model;
-use steroids\gii\forms\meta\ModelAttributeEntityMeta;
+use steroids\gii\forms\meta\BackendModelAttributeEntityMeta;
 use steroids\gii\traits\CustomPropertyTrait;
 use yii\helpers\ArrayHelper;
 
 /**
  * @property-read bool $isProtected
  */
-class ModelAttributeEntity extends ModelAttributeEntityMeta
+class BackendModelAttributeEntity extends BackendModelAttributeEntityMeta
 {
     use CustomPropertyTrait;
 
     /**
-     * @var ModelEntity
+     * @var BackendModelEntity
      */
     public $modelEntity;
 
@@ -25,7 +25,7 @@ class ModelAttributeEntity extends ModelAttributeEntityMeta
     public $customMigrationColumnType;
 
     /**
-     * @param ModelEntity $entity
+     * @param BackendModelEntity $entity
      * @param string $classType
      * @return static[]
      * @throws \ReflectionException

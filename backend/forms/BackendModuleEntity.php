@@ -4,12 +4,12 @@ namespace steroids\gii\forms;
 
 use steroids\core\helpers\ClassFile;
 use steroids\core\helpers\ModuleHelper;
-use steroids\gii\forms\meta\ModuleEntityMeta;
+use steroids\gii\forms\meta\BackendModuleEntityMeta;
 use steroids\gii\helpers\GiiHelper;
 use yii\base\Module;
 use yii\helpers\ArrayHelper;
 
-class ModuleEntity extends ModuleEntityMeta
+class BackendModuleEntity extends BackendModuleEntityMeta
 {
     /**
      * @var ClassFile

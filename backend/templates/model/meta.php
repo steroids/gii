@@ -2,10 +2,10 @@
 
 namespace app\views;
 
-use steroids\gii\forms\ModelEntity;
+use steroids\gii\forms\BackendModelEntity;
 use yii\helpers\ArrayHelper;
 
-/* @var $modelEntity ModelEntity */
+/* @var $modelEntity BackendModelEntity */
 
 $useClasses = [];
 $rules = $modelEntity->renderRules($useClasses);

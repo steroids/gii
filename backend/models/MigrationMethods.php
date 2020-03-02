@@ -4,9 +4,9 @@ namespace steroids\gii\models;
 
 use steroids\gii\enums\MigrateMode;
 use steroids\gii\enums\RelationType;
-use steroids\gii\forms\ModelAttributeEntity;
-use steroids\gii\forms\ModelEntity;
-use steroids\gii\forms\ModelRelationEntity;
+use steroids\gii\forms\BackendModelAttributeEntity;
+use steroids\gii\forms\BackendModelEntity;
+use steroids\gii\forms\BackendModelRelationEntity;
 use yii\base\BaseObject;
 use yii\helpers\ArrayHelper;
 
@@ -18,12 +18,12 @@ class MigrationMethods extends BaseObject
     use MigrationPostgresTrait;
 
     /**
-     * @var ModelEntity|null
+     * @var BackendModelEntity|null
      */
     public $prevModelEntity;
 
     /**
-     * @var ModelEntity
+     * @var BackendModelEntity
      */
     public $nextModelEntity;
 
@@ -34,32 +34,32 @@ class MigrationMethods extends BaseObject
     public $migrateMode;
 
     /**
-     * @var ModelAttributeEntity[]
+     * @var BackendModelAttributeEntity[]
      */
     public $createTable = [];
 
     /**
-     * @var ModelAttributeEntity[]
+     * @var BackendModelAttributeEntity[]
      */
     public $addColumn = [];
 
     /**
-     * @var ModelAttributeEntity[]
+     * @var BackendModelAttributeEntity[]
      */
     public $alterColumn = [];
 
     /**
-     * @var ModelAttributeEntity[]
+     * @var BackendModelAttributeEntity[]
      */
     public $alterColumnDown = [];
 
     /**
-     * @var ModelAttributeEntity[]
+     * @var BackendModelAttributeEntity[]
      */
     public $renameColumn = [];
 
     /**
-     * @var ModelAttributeEntity[]
+     * @var BackendModelAttributeEntity[]
      */
     public $dropColumn = [];
 
@@ -69,7 +69,7 @@ class MigrationMethods extends BaseObject
     public $junctionTables = [];
 
     /**
-     * @var ModelRelationEntity[]
+     * @var BackendModelRelationEntity[]
      */
     public $foreignKeys = [];
 
@@ -117,7 +117,7 @@ class MigrationMethods extends BaseObject
         } else {
             $parts[] = $this->nextModelEntity->name;
 
-            /** @var ModelAttributeEntity[] $attributeEntities */
+            /** @var BackendModelAttributeEntity[] $attributeEntities */
             $attributeEntities = [];
             if (!empty($this->addColumn)) {
                 $parts[] = 'add';
@@ -187,7 +187,7 @@ class MigrationMethods extends BaseObject
                 $this->renameColumn[] = $attributeEntity;
             }
 
-            /** @var ModelAttributeEntity $prevAttributeEntity */
+            /** @var BackendModelAttributeEntity $prevAttributeEntity */
             $prevAttributeEntity = $prevMeta[$attributeEntity->prevName];
             if ($prevAttributeEntity->renderMigrationColumnType() !== $attributeEntity->renderMigrationColumnType()) {
                 $this->alterColumn[] = $attributeEntity;

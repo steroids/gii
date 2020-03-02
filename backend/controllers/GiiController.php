@@ -2,19 +2,17 @@
 
 namespace steroids\gii\controllers;
 
-use steroids\core\base\FormModel;
-use steroids\core\base\Model;
-use steroids\gii\forms\EntityInterface;
 use Yii;
+use steroids\core\base\FormModel;
+use steroids\gii\forms\EntityInterface;
 use steroids\core\helpers\ClassFile;
 use steroids\core\helpers\ModuleHelper;
-use steroids\gii\forms\ModuleEntity;
 use steroids\core\base\Type;
 use steroids\gii\GiiModule;
 use steroids\gii\enums\ClassType;
-use steroids\gii\forms\EnumEntity;
-use steroids\gii\forms\FormEntity;
-use steroids\gii\forms\ModelEntity;
+use steroids\gii\forms\BackendBackendEnumEntity;
+use steroids\gii\forms\BackendFormEntity;
+use steroids\gii\forms\BackendModelEntity;
 use steroids\gii\models\AuthPermissionSync;
 use yii\helpers\ArrayHelper;
 use yii\helpers\StringHelper;
@@ -57,19 +55,19 @@ class GiiController extends Controller
         $applications = [];
         $entityTypes = [
             [
-                'className' => EnumEntity::class,
+                'className' => BackendBackendEnumEntity::class,
                 'label' => 'enums',
                 'type' => ClassType::ENUM,
                 'dir' => ClassType::getDir(ClassType::ENUM),
             ],
             [
-                'className' => FormEntity::class,
+                'className' => BackendFormEntity::class,
                 'label' => 'forms',
                 'type' => ClassType::FORM,
                 'dir' => ClassType::getDir(ClassType::FORM),
             ],
             [
-                'className' => ModelEntity::class,
+                'className' => BackendModelEntity::class,
                 'label' => 'models',
                 'type' => ClassType::MODEL,
                 'dir' => ClassType::getDir(ClassType::MODEL),

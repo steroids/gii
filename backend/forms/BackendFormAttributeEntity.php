@@ -9,7 +9,7 @@ use yii\helpers\ArrayHelper;
 /**
  * @property-read bool $isProtected
  */
-class FormAttributeEntity extends ModelAttributeEntity
+class BackendFormAttributeEntity extends BackendModelAttributeEntity
 {
     /**
      * @inheritdoc

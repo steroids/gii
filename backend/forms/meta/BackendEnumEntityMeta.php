@@ -3,14 +3,14 @@
 namespace steroids\gii\forms\meta;
 
 use steroids\core\base\FormModel;
-use steroids\gii\forms\EnumItemEntity;
+use steroids\gii\forms\BackendEnumItemEntity;
 use \Yii;
 use yii\db\ActiveQuery;
 
 /**
- * @property-read EnumItemEntity[] $items
+ * @property-read BackendEnumItemEntity[] $items
  */
-abstract class EnumEntityMeta extends FormModel
+abstract class BackendEnumEntityMeta extends FormModel
 {
     public $namespace;
     public $name;
@@ -48,6 +48,6 @@ abstract class EnumEntityMeta extends FormModel
      */
     public function getItems()
     {
-        return $this->hasMany(EnumItemEntity::class);
+        return $this->hasMany(BackendEnumItemEntity::class);
     }
 }

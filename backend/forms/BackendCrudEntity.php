@@ -4,12 +4,12 @@ namespace steroids\gii\forms;
 
 use steroids\core\helpers\ClassFile;
 use steroids\gii\enums\ClassType;
-use steroids\gii\forms\meta\CrudEntityMeta;
+use steroids\gii\forms\meta\BackendCrudEntityMeta;
 use steroids\gii\helpers\GiiHelper;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Inflector;
 
-class CrudEntity extends CrudEntityMeta
+class BackendCrudEntity extends BackendCrudEntityMeta
 {
     /**
      * @var ClassFile
@@ -48,7 +48,7 @@ class CrudEntity extends CrudEntityMeta
     {
         if ($this->validate()) {
             // Lazy create module
-            ModuleEntity::autoCreateForEntity($this);
+            BackendModuleEntity::autoCreateForEntity($this);
 
             // Create/update meta information
             GiiHelper::renderFile('crud/meta', $this->classFile->metaPath, [

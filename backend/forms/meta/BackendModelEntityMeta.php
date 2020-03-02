@@ -4,12 +4,12 @@ namespace steroids\gii\forms\meta;
 
 use steroids\core\base\FormModel;
 use yii\db\ActiveQuery;
-use steroids\gii\forms\ModelAttributeEntity;
-use steroids\gii\forms\ModelRelationEntity;
+use steroids\gii\forms\BackendModelAttributeEntity;
+use steroids\gii\forms\BackendModelRelationEntity;
 use steroids\gii\enums\MigrateMode;
 use \Yii;
 
-abstract class ModelEntityMeta extends FormModel
+abstract class BackendModelEntityMeta extends FormModel
 {
     public $namespace;
     public $name;
@@ -31,7 +31,7 @@ abstract class ModelEntityMeta extends FormModel
     */
     public function getAttributeItems()
     {
-        return $this->hasMany(ModelAttributeEntity::class);
+        return $this->hasMany(BackendModelAttributeEntity::class);
     }
 
     /**
@@ -39,7 +39,7 @@ abstract class ModelEntityMeta extends FormModel
     */
     public function getRelationItems()
     {
-        return $this->hasMany(ModelRelationEntity::class);
+        return $this->hasMany(BackendModelRelationEntity::class);
     }
 
     public static function meta()

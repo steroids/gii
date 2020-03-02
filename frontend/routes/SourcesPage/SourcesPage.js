@@ -17,7 +17,7 @@ import ModelView from './views/ModelView';
 
 import './SourcesPage.scss';
 import SourceTreeView from './views/SourceTreeView';
-import {reInit} from '../../../../_npm/@steroidsjs/core/actions/auth';
+import {reInit} from '@steroidsjs/core/actions/auth';
 import ModuleView from './views/ModuleView';
 
 @connect(
