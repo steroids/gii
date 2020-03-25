@@ -1,7 +1,10 @@
+const utils = require('../../react/webpack/utils');
+
 require('../../react/webpack')
     .config({
         port: 9992,
         sourcePath: __dirname,
+        outputPath: __dirname + '/../assets',
         staticPath: '',
         baseUrl: '',
         webpack: {

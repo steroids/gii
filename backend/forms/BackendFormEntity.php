@@ -124,7 +124,7 @@ class BackendFormEntity extends BackendModelEntity implements EntityInterface
      */
     public function getQueryModelEntity()
     {
-        return $this->queryModel ? BackendModelEntity::findOne(ClassFile::createByClass($this->queryModel), ClassFile::TYPE_MODEL) : null;
+        return $this->queryModel ? BackendModelEntity::findOne(ClassFile::createByClass($this->queryModel, ClassFile::TYPE_MODEL)) : null;
     }
 
     /**

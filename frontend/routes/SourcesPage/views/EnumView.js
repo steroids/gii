@@ -46,7 +46,7 @@ export default class EnumView extends React.PureComponent {
             <div className={bem.block()}>
                 {this.props.formValues && (
                     <Detail
-                        model='steroids.gii.forms.EnumEntity'
+                        model='steroids.gii.forms.BackendEnumEntity'
                         item={{
                             name: this.props.formValues.namespace + '\\' + _upperFirst(this.props.formValues.name || '...'),
                         }}
@@ -57,7 +57,7 @@ export default class EnumView extends React.PureComponent {
                 )}
                 <Form
                     formId={getFormId(this.props)}
-                    model='steroids.gii.forms.EnumEntity'
+                    model='steroids.gii.forms.BackendEnumEntity'
                     layout='default'
                     size='sm'
                     initialValues={this.props.initialValues}
@@ -84,7 +84,7 @@ export default class EnumView extends React.PureComponent {
                     </h3>
                     <FieldList
                         attribute='items'
-                        model='steroids.gii.forms.EnumItemEntity'
+                        model='steroids.gii.forms.BackendEnumItemEntity'
                         className={bem(bem.element('field-list'), 'my-2')}
                         items={[]
                             .concat([

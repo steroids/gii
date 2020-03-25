@@ -4,16 +4,14 @@ import {connect} from 'react-redux';
 import {Field, change} from 'redux-form';
 import {Tooltip} from 'reactstrap';
 
-import {html} from 'components';
-
 import './PermissionCheckbox.scss';
+import {bem} from '@steroidsjs/core/hoc';
 
-const bem = html.bem('PermissionCheckbox');
 const FORM_ID = 'AccessRulesEditor';
 
-export default
+@bem('PermissionCheckbox')
 @connect()
-class PermissionCheckbox extends React.PureComponent {
+export default class PermissionCheckbox extends React.PureComponent {
 
     static propTypes = {
         role: PropTypes.string,
@@ -53,6 +51,7 @@ class PermissionCheckbox extends React.PureComponent {
         );
 
         const tooltipId = 'tooltip_' + this.props.role + '_' + this.props.permission.name.replace(/[^0-9a-z]+/g, '_');
+        const bem = this.props.bem;
         return (
             <div
                 key={this.props.permission.name}

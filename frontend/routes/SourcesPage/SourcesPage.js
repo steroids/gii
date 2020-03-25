@@ -7,7 +7,7 @@ import _get from 'lodash/get';
 import _isEqual from 'lodash/isEqual';
 import _isEmpty from 'lodash/isEmpty';
 import queryString from 'query-string';
-import {goToPage} from '@steroidsjs/core/actions/navigation';
+import {goToRoute} from '@steroidsjs/core/actions/router';
 import Loader from '@steroidsjs/core/ui/layout/Loader';
 
 import {ROUTE_SOURCES} from '../index';
@@ -153,7 +153,7 @@ export default class SourcesPage extends React.PureComponent {
 
     _onTreeClick(e, item) {
         if (!item.items && item.id) {
-            this.props.dispatch(goToPage(ROUTE_SOURCES, {
+            this.props.dispatch(goToRoute(ROUTE_SOURCES, {
                 type: item.type,
                 id: item.id.replace(/\\/g, '-'),
             }));
@@ -209,7 +209,7 @@ export default class SourcesPage extends React.PureComponent {
                 id,
             })
                 .then(entity => {
-                    this.props.dispatch(goToPage(ROUTE_SOURCES, {
+                    this.props.dispatch(goToRoute(ROUTE_SOURCES, {
                         type: entity.id ? type : null,
                         id: entity.id || null,
                     }));

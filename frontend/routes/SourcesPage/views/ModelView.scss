@@ -44,13 +44,13 @@
     top: -6px;
     left: 6px;
     z-index: 1;
-    background: #fff;
+    background: $card-bg;
     height: 10px;
     font-size: 10px;
     padding: 2px;
-    box-shadow: 0 0 3px #fff;
+    box-shadow: $box-shadow;
     line-height: 6px;
-    color: $gray-600;
+    color: $card-color;
   }
 
   .DropDownFieldView__drop-down {

@@ -36,7 +36,7 @@ export default class ModuleView extends React.PureComponent {
             <div className={bem.block()}>
                 {this.props.formValues && (
                     <Detail
-                        model='steroids.gii.forms.ModelEntity'
+                        model='steroids.gii.forms.BackendModelEntity'
                         item={{
                             className: [
                                 'app',
@@ -56,7 +56,7 @@ export default class ModuleView extends React.PureComponent {
                 )}
                 <Form
                     formId={getFormId(this.props)}
-                    model='steroids.gii.forms.ModuleEntity'
+                    model='steroids.gii.forms.BackendModuleEntity'
                     layout='default'
                     size='sm'
                     initialValues={this.props.initialValues}

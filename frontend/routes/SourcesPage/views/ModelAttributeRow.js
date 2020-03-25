@@ -94,7 +94,7 @@ export default class ModelAttributeRow extends React.PureComponent {
 
     renderAdditional() {
         const bem = this.props.bem;
-        const type = (this.props.appTypes || []).find(item => item.name === this.props.appType);
+        const type = (this.props.types || []).find(item => item.name === this.props.appType);
         if (!type || !type.additionalFields) {
             return null;
         }

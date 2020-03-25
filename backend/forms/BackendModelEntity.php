@@ -101,11 +101,11 @@ class BackendModelEntity extends BackendModelEntityMeta implements EntityInterfa
      */
     public function rules()
     {
-        return [
+        return array_merge(parent::rules(), [
             ['name', 'filter', 'filter' => function ($value) {
                 return ucfirst($value);
             }],
-        ];
+        ]);
     }
 
     public function fields()

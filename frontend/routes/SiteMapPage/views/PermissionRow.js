@@ -4,16 +4,16 @@ import {Collapse} from 'reactstrap';
 import {connect} from 'react-redux';
 import {Field, formValueSelector} from 'redux-form';
 
-import {html} from 'components';
+import {bem} from '@steroidsjs/core/hoc';
 import PermissionCheckbox from './PermissionCheckbox';
 
 import './PermissionRow.scss';
 
-const bem = html.bem('PermissionRow');
 const FORM_ID = 'AccessRulesEditor';
 const selector = formValueSelector(FORM_ID);
 
-const WrappedPermissionRow = @connect(
+const WrappedPermissionRow = @bem('PermissionRow')
+@connect(
     (state, props) => {
         // Count child checked items
         let checkedCount = 0;
@@ -95,6 +95,7 @@ const WrappedPermissionRow = @connect(
                 );
             }
 
+            const bem = this.props.bem;
             return (
                 <div className={bem.block()}>
                     <div

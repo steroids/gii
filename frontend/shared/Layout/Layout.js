@@ -1,11 +1,11 @@
 import React from 'react';
-import {Link, Nav} from '@steroidsjs/core/ui/nav';
 import {Notifications} from '@steroidsjs/core/ui/layout';
 import layout, {STATUS_LOADING, STATUS_OK} from '@steroidsjs/core/hoc/layout';
 
 import {bem, components} from '@steroidsjs/core/hoc';
 import {ROUTE_ROOT} from '../../routes';
 import './Layout.scss';
+import Header from '@steroidsjs/core/ui/layout/Header';
 
 @bem('Layout')
 @components('http')
@@ -13,12 +13,12 @@ import './Layout.scss';
     props => props.http.post('/api/gii/init', {
         timestamp: Date.now(),
         models: [
-            'steroids.gii.forms.EnumEntity',
-            'steroids.gii.forms.EnumItemEntity',
-            'steroids.gii.forms.ModelEntity',
-            'steroids.gii.forms.ModelAttributeEntity',
-            'steroids.gii.forms.ModelRelationEntity',
-            'steroids.gii.forms.ModuleEntity',
+            'steroids.gii.forms.BackendEnumEntity',
+            'steroids.gii.forms.BackendEnumItemEntity',
+            'steroids.gii.forms.BackendModelEntity',
+            'steroids.gii.forms.BackendModelAttributeEntity',
+            'steroids.gii.forms.BackendModelRelationEntity',
+            'steroids.gii.forms.BackendModuleEntity',
         ],
         enums: [
             'steroids.gii.enums.RelationType',
@@ -36,21 +36,15 @@ export default class Layout extends React.PureComponent {
         const bem = this.props.bem;
         return (
             <div className={bem.block()}>
-                <nav className={bem('navbar navbar-expand-md navbar-dark', bem.element('header'))}>
-                    <div>
-                        <Link
-                            className={bem('navbar-brand', bem.element('logo'))}
-                            toRoute={ROUTE_ROOT}
-                        >
-                            Steroids Gii
-                        </Link>
-                    </div>
-                    <Nav
-                        layout='navbar'
-                        items={[
-                        ]}
-                    />
-                </nav>
+                <Header
+                    className={bem('navbar-dark', bem.element('header'))}
+                    logo={{
+                        title: 'Steroids Gii',
+                    }}
+                    nav={{
+                        items: ROUTE_ROOT,
+                    }}
+                />
                 <div className={bem.element('content')}>
                     <Notifications/>
                     {this.renderContent()}

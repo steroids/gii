@@ -1,0 +1,73 @@
+{
+  "errors": [],
+  "warnings": [],
+  "assetsByChunkName": {
+    "common": "bundle-common.js",
+    "index": [
+      "bundle-index.css",
+      "bundle-index.js"
+    ]
+  },
+  "assets": [
+    {
+      "name": "bundle-all.js",
+      "size": 530,
+      "chunks": [],
+      "chunkNames": [],
+      "info": {},
+      "emitted": true
+    },
+    {
+      "name": "bundle-common.js",
+      "size": 1498,
+      "chunks": [
+        "common"
+      ],
+      "chunkNames": [
+        "common"
+      ],
+      "info": {},
+      "emitted": true
+    },
+    {
+      "name": "bundle-index.css",
+      "size": 186176,
+      "chunks": [
+        "index"
+      ],
+      "chunkNames": [
+        "index"
+      ],
+      "info": {},
+      "emitted": true
+    },
+    {
+      "name": "bundle-index.js",
+      "size": 1610989,
+      "chunks": [
+        "index"
+      ],
+      "chunkNames": [
+        "index"
+      ],
+      "info": {},
+      "emitted": true
+    },
+    {
+      "name": "index.html",
+      "size": 417,
+      "chunks": [],
+      "chunkNames": [],
+      "info": {},
+      "emitted": true
+    }
+  ],
+  "filteredAssets": 0,
+  "assetsUrls": [
+    "bundle-common.js",
+    "bundle-index.css",
+    "bundle-index.js",
+    "bundle-all.js",
+    "index.html"
+  ]
+}

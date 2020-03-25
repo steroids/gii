@@ -61,7 +61,7 @@ export default class ModelView extends React.PureComponent {
             <div className={bem.block()}>
                 {this.props.formValues && (
                     <Detail
-                        model='steroids.gii.forms.ModelEntity'
+                        model='steroids.gii.forms.BackendModelEntity'
                         item={{
                             name: this.props.formValues.namespace + '\\' + _upperFirst(this.props.formValues.name || '...'),
                         }}
@@ -72,7 +72,7 @@ export default class ModelView extends React.PureComponent {
                 )}
                 <Form
                     formId={getFormId(this.props)}
-                    model='steroids.gii.forms.ModelEntity'
+                    model='steroids.gii.forms.BackendModelEntity'
                     layout='default'
                     size='sm'
                     initialValues={this.props.initialValues}
@@ -107,10 +107,11 @@ export default class ModelView extends React.PureComponent {
                     </h3>
                     <FieldList
                         attribute='attributeItems'
-                        model='steroids.gii.forms.ModelAttributeEntity'
+                        model='steroids.gii.forms.BackendModelAttributeEntity'
                         itemView={ModelAttributeRow}
                         types={this.props.types}
                         className={bem(bem.element('field-list'), 'my-2')}
+                        initialRowsCount={1}
                         items={[
                             {
                                 attribute: 'name',
@@ -186,7 +187,7 @@ export default class ModelView extends React.PureComponent {
                         </h3>
                         <FieldList
                             attribute='relationItems'
-                            model='steroids.gii.forms.ModelRelationEntity'
+                            model='steroids.gii.forms.BackendModelRelationEntity'
                             itemView={ModelRelationRow}
                             className={bem(bem.element('field-list'), 'my-2')}
                             initialRowsCount={0}
@@ -233,10 +234,7 @@ export default class ModelView extends React.PureComponent {
                     </div>
                     <div className='mt-4 row'>
                         <div className='col-md-3'>
-                            <Field
-                                attribute='migrateMode'
-                                items='steroids.gii.enums.MigrateMode'
-                            />
+                            <Field attribute='migrateMode'/>
                         </div>
                     </div>
                     <div className='mb-5'>

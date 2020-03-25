@@ -3,6 +3,7 @@
 namespace steroids\gii\controllers;
 
 use Yii;
+use steroids\gii\GiiAsset;
 use steroids\core\base\FormModel;
 use steroids\gii\forms\EntityInterface;
 use steroids\core\helpers\ClassFile;
@@ -14,7 +15,9 @@ use steroids\gii\forms\BackendBackendEnumEntity;
 use steroids\gii\forms\BackendFormEntity;
 use steroids\gii\forms\BackendModelEntity;
 use steroids\gii\models\AuthPermissionSync;
+use yii\base\Model;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Html;
 use yii\helpers\StringHelper;
 use yii\rbac\Permission;
 use yii\web\BadRequestHttpException;
@@ -22,6 +25,19 @@ use yii\web\Controller;
 
 class GiiController extends Controller
 {
+    public static function siteMap()
+    {
+        return [
+            'gii' => [
+                'visible' => false,
+                'accessCheck' => [GiiModule::class, 'accessCheck'],
+                'items' => [
+                    'index' => '/<action:gii.*>'
+                ],
+            ],
+        ];
+    }
+
     public static function apiMap()
     {
         return [
@@ -46,6 +62,16 @@ class GiiController extends Controller
             $this->enableCsrfValidation = false;
         }
         return parent::beforeAction($action);
+    }
+
+    public function actionIndex()
+    {
+        \Yii::$app->assetManager->bundles = [];
+        \Yii::$app->assetManager->linkAssets = true;
+        GiiAsset::register($this->view);
+
+        $this->layout = '@steroids/core/views/layout-blank';
+        return $this->renderContent(Html::tag('div', '', ['id' => 'root']));
     }
 
     public function actionInit()
@@ -106,7 +132,7 @@ class GiiController extends Controller
                             $typeItems = array_map(
                                 function (EntityInterface $entity) use ($entityType) {
                                     return [
-                                        'id' =>str_replace('\\', '-',  $entity->classFile->className),
+                                        'id' => str_replace('\\', '-', $entity->classFile->className),
                                         'type' => $entityType['type'],
                                         'label' => $entity->classFile->name,
                                         'namespace' => $entity->classFile->namespace,
@@ -213,6 +239,7 @@ class GiiController extends Controller
 
         $entity = null;
         if (Yii::$app->request->isPost) {
+            /** @var Model $entity */
             $entity = $entityClass::findOrCreate($classFile);
             $entity->attributes = $data;
             switch ($type) {
@@ -242,6 +269,7 @@ class GiiController extends Controller
     public function actionApiGetPermissions()
     {
         AuthPermissionSync::syncModels();
+        AuthPermissionSync::syncActions();
 
         $auth = \Yii::$app->authManager;
         $prefix = \Yii::$app->request->post('prefix');

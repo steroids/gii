@@ -9,9 +9,9 @@ import 'style/index.scss';
 @application({
     onInit: ({ui}) => {
         // Automatically import all views
-        ui.addViews(require.context('@steroidsjs/bootstrap', true, /View.js$/));
-        ui.addFields(require.context('@steroidsjs/bootstrap', true, /Field.js$/));
-        ui.addFormatters(require.context('@steroidsjs/bootstrap', true, /Formatter.js$/));
+        ui.addViews(require.context('@steroidsjs/bootstrap', true, /View.(js|tsx)$/));
+        ui.addFields(require.context('@steroidsjs/bootstrap', true, /Field.(js|tsx)$/));
+        ui.addFormatters(require.context('@steroidsjs/bootstrap', true, /Formatter.(js|tsx)$/));
 
         // Automatically import all fields and formatters from steroids
         ui.addFields(require.context('@steroidsjs/core/ui', true, /Field.tsx?$/));
