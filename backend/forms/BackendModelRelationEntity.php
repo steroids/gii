@@ -99,6 +99,15 @@ class BackendModelRelationEntity extends BackendModelRelationEntityMeta
         );
     }
 
+    public function rules()
+    {
+        return array_merge(parent::rules(), [
+            [['relationModel'], 'filter', 'filter' => function ($value) {
+                return is_string($value) ? rtrim($value, '\\') : $value;
+            }],
+        ]);
+    }
+
     public function getIsHasOne()
     {
         return $this->type === RelationType::HAS_ONE;

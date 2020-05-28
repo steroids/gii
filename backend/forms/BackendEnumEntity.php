@@ -11,7 +11,7 @@ use steroids\gii\models\ValueExpression;
 use steroids\gii\traits\EntityTrait;
 use yii\helpers\ArrayHelper;
 
-class BackendBackendEnumEntity extends BackendEnumEntityMeta implements EntityInterface
+class BackendEnumEntity extends BackendEnumEntityMeta implements EntityInterface
 {
     use EntityTrait;
 
@@ -85,11 +85,13 @@ class BackendBackendEnumEntity extends BackendEnumEntityMeta implements EntityIn
         return [
             'namespace',
             'name',
-            'className' => function (BackendBackendEnumEntity $entity) {
+            'className' => function (BackendEnumEntity $entity) {
                 return $entity->classFile->className;
             },
             'customColumns',
             'items',
+            'id',
+            'type',
         ];
     }
 

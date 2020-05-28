@@ -3,13 +3,10 @@
 namespace steroids\gii\forms\meta;
 
 use steroids\core\base\FormModel;
+use yii\db\ActiveQuery;
 use steroids\gii\forms\BackendEnumItemEntity;
 use \Yii;
-use yii\db\ActiveQuery;
 
-/**
- * @property-read BackendEnumItemEntity[] $items
- */
 abstract class BackendCrudEntityMeta extends FormModel
 {
     public $namespace;
@@ -30,8 +27,16 @@ abstract class BackendCrudEntityMeta extends FormModel
         return [
             [['namespace', 'name', 'queryModel', 'searchModel', 'title', 'url'], 'string', 'max' => 255],
             [['namespace', 'name', 'queryModel', 'title'], 'required'],
-            [['createActionIndex', 'withDelete', 'withSearch', 'createActionCreate', 'createActionUpdate', 'createActionView'], 'boolean'],
+            [['createActionIndex', 'withDelete', 'withSearch', 'createActionCreate', 'createActionUpdate', 'createActionView'], 'steroids\\core\\validators\\ExtBooleanValidator'],
         ];
+    }
+
+    /**
+    * @return ActiveQuery
+    */
+    public function getItems()
+    {
+        return $this->hasMany(BackendEnumItemEntity::class);
     }
 
     public static function meta()
@@ -39,22 +44,22 @@ abstract class BackendCrudEntityMeta extends FormModel
         return [
             'namespace' => [
                 'label' => Yii::t('steroids', 'Namespace'),
-                'required' => true
+                'isRequired' => true
             ],
             'name' => [
                 'label' => Yii::t('steroids', 'Class name'),
-                'required' => true
+                'isRequired' => true
             ],
             'queryModel' => [
                 'label' => Yii::t('steroids', 'Query model'),
-                'required' => true
+                'isRequired' => true
             ],
             'searchModel' => [
                 'label' => Yii::t('steroids', 'Search model')
             ],
             'title' => [
                 'label' => Yii::t('steroids', 'Title'),
-                'required' => true
+                'isRequired' => true
             ],
             'url' => [
                 'label' => Yii::t('steroids', 'Url')
@@ -84,13 +89,5 @@ abstract class BackendCrudEntityMeta extends FormModel
                 'appType' => 'boolean'
             ]
         ];
-    }
-
-    /**
-     * @return ActiveQuery
-     */
-    public function getItems()
-    {
-        return $this->hasMany(BackendEnumItemEntity::class);
     }
 }

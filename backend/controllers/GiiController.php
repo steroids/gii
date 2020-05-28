@@ -11,7 +11,7 @@ use steroids\core\helpers\ModuleHelper;
 use steroids\core\base\Type;
 use steroids\gii\GiiModule;
 use steroids\gii\enums\ClassType;
-use steroids\gii\forms\BackendBackendEnumEntity;
+use steroids\gii\forms\BackendEnumEntity;
 use steroids\gii\forms\BackendFormEntity;
 use steroids\gii\forms\BackendModelEntity;
 use steroids\gii\models\AuthPermissionSync;
@@ -81,7 +81,7 @@ class GiiController extends Controller
         $applications = [];
         $entityTypes = [
             [
-                'className' => BackendBackendEnumEntity::class,
+                'className' => BackendEnumEntity::class,
                 'label' => 'enums',
                 'type' => ClassType::ENUM,
                 'dir' => ClassType::getDir(ClassType::ENUM),

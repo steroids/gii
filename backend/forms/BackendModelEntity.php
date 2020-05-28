@@ -113,7 +113,7 @@ class BackendModelEntity extends BackendModelEntityMeta implements EntityInterfa
         return [
             'namespace',
             'name',
-            'className' => function(BackendModelEntity $entity) {
+            'className' => function (BackendModelEntity $entity) {
                 return $entity->classFile->className;
             },
             'tableName',
@@ -121,6 +121,8 @@ class BackendModelEntity extends BackendModelEntityMeta implements EntityInterfa
             'queryModel',
             'attributeItems',
             'relationItems',
+            'id',
+            'type',
         ];
     }
 
@@ -149,24 +151,26 @@ class BackendModelEntity extends BackendModelEntityMeta implements EntityInterfa
             }
 
             // Create migration
-            $migrationMethods = new MigrationMethods([
-                'prevModelEntity' => $prevModelEntity,
-                'nextModelEntity' => $this,
-                'migrateMode' => !empty($this->migrateMode)
-                    ? $this->migrateMode
-                    : MigrateMode::UPDATE,
-            ]);
-            if (!$migrationMethods->isEmpty()) {
-                $name = $migrationMethods->generateName();
-                $path = $this->classFile->moduleDir . '/migrations/' . $name . '.php';
-
-                GiiHelper::renderFile('model/migration', $path, [
-                    'modelEntity' => $this,
-                    'name' => $name,
-                    'namespace' => 'app\\' . implode('\\', explode('.', $this->classFile->moduleId)) . '\\migrations',
-                    'migrationMethods' => $migrationMethods,
+            if ($this->migrateMode && $this->migrateMode !== MigrateMode::NONE) {
+                $migrationMethods = new MigrationMethods([
+                    'prevModelEntity' => $prevModelEntity,
+                    'nextModelEntity' => $this,
+                    'migrateMode' => !empty($this->migrateMode)
+                        ? $this->migrateMode
+                        : MigrateMode::UPDATE,
                 ]);
-                \Yii::$app->session->addFlash('success', 'Added migration ' . $name);
+                if (!$migrationMethods->isEmpty()) {
+                    $name = $migrationMethods->generateName();
+                    $path = $this->classFile->moduleDir . '/migrations/' . $name . '.php';
+
+                    GiiHelper::renderFile('model/migration', $path, [
+                        'modelEntity' => $this,
+                        'name' => $name,
+                        'namespace' => 'app\\' . implode('\\', explode('.', $this->classFile->moduleId)) . '\\migrations',
+                        'migrationMethods' => $migrationMethods,
+                    ]);
+                    \Yii::$app->session->addFlash('success', 'Added migration ' . $name);
+                }
             }
 
             return true;
@@ -239,7 +243,7 @@ class BackendModelEntity extends BackendModelEntityMeta implements EntityInterfa
                 }
 
                 if ($key === 'enumClassName') {
-                    $enumEntity = BackendBackendEnumEntity::findOne(ClassFile::createByClass($value, ClassFile::TYPE_ENUM));
+                    $enumEntity = BackendEnumEntity::findOne(ClassFile::createByClass($value, ClassFile::TYPE_ENUM));
                     $meta[$name][$key] = new ValueExpression($enumEntity->name . '::class');
                     $useClasses[] = $enumEntity->getClassName();
                 }
@@ -259,7 +263,8 @@ class BackendModelEntity extends BackendModelEntityMeta implements EntityInterfa
             $props = [];
             $type = \Yii::$app->types->getType($this->getAttributeEntity($attribute)->appType);
             if (!$type) {
-                var_dump($attribute, $item);exit();
+                var_dump($attribute, $item);
+                exit();
             }
 
             if ($searchForm) {

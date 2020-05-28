@@ -210,8 +210,8 @@ export default class SourcesPage extends React.PureComponent {
             })
                 .then(entity => {
                     this.props.dispatch(goToRoute(ROUTE_SOURCES, {
-                        type: entity.id ? type : null,
-                        id: entity.id || null,
+                        type: entity.type,
+                        id: entity.id,
                     }));
 
                     this.props.dispatch(reInit());

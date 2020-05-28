@@ -2,9 +2,9 @@
 
 namespace app\views;
 
-use steroids\gii\forms\BackendBackendEnumEntity;
+use steroids\gii\forms\BackendEnumEntity;
 
-/* @var $enumEntity BackendBackendEnumEntity */
+/* @var $enumEntity BackendEnumEntity */
 
 echo "<?php\n";
 ?>

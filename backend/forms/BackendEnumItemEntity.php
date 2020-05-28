@@ -11,7 +11,7 @@ use yii\helpers\ArrayHelper;
 class BackendEnumItemEntity extends BackendEnumItemEntityMeta
 {
     /**
-     * @param BackendBackendEnumEntity $entity
+     * @param BackendEnumEntity $entity
      * @return static[]
      * @throws \ReflectionException
      */
