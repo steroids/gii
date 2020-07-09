@@ -30,12 +30,12 @@ use <?= $relationClassName ?>;
 abstract class <?= $formEntity->name ?>Meta extends FormModel
 {
 <?php foreach ($formEntity->publicAttributeItems as $attributeEntity) { ?>
-    public $<?= $attributeEntity->name ?>;
+    public <?= $attributeEntity->getPropertyType() ?> $<?= $attributeEntity->name ?>;
 <?php } ?>
 
 <?php if (count($formEntity->getProperties()) > 0) { ?>
 <?php foreach ($formEntity->getProperties() as $key => $value) { ?>
-    public $<?= $key ?><?= $value !== null ? ' = ' . $value : '' ?>;
+    public <?= $value ? 'array' : '' ?> $<?= $key ?><?= $value !== null ? ' = ' . $value : '' ?>;
 <?php } ?>
 
 <?php } ?>

@@ -3,8 +3,35 @@
 namespace steroids\gii\forms;
 
 use steroids\core\base\Model;
+use steroids\core\types\AddressType;
+use steroids\core\types\AutoTimeType;
+use steroids\core\types\BooleanType;
+use steroids\core\types\CategorizedStringType;
+use steroids\core\types\DateTimeType;
+use steroids\core\types\DateType;
+use steroids\core\types\DoubleType;
+use steroids\core\types\EmailType;
+use steroids\core\types\EnumListType;
+use steroids\core\types\EnumType;
+use steroids\core\types\FilesType;
+use steroids\core\types\FileType;
+use steroids\core\types\HtmlType;
+use steroids\core\types\IntegerType;
+use steroids\core\types\MoneyType;
+use steroids\core\types\MoneyWithCurrencyType;
+use steroids\core\types\PasswordType;
+use steroids\core\types\PhoneType;
+use steroids\core\types\PrimaryKeyType;
+use steroids\core\types\RangeType;
+use steroids\core\types\RelationType;
+use steroids\core\types\ScheduleType;
+use steroids\core\types\SizeType;
+use steroids\core\types\StringType;
+use steroids\core\types\TextType;
+use steroids\core\types\TimeType;
 use steroids\gii\forms\meta\BackendModelAttributeEntityMeta;
 use steroids\gii\traits\CustomPropertyTrait;
+use Yii;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -23,6 +50,50 @@ class BackendModelAttributeEntity extends BackendModelAttributeEntityMeta
      * @var string
      */
     public $customMigrationColumnType;
+
+    /**
+     * Return property type depends by appType
+     *
+     * @return string|null
+     */
+    public function getPropertyType()
+    {
+        switch ($this->appType) {
+            case AddressType::ATTRIBUTE_NAME:
+            case AutoTimeType::ATTRIBUTE_NAME:
+            case CategorizedStringType::ATTRIBUTE_NAME:
+            case DateTimeType::ATTRIBUTE_NAME:
+            case DateType::ATTRIBUTE_NAME:
+            case EmailType::ATTRIBUTE_NAME:
+            case HtmlType::ATTRIBUTE_NAME:
+            case PasswordType::ATTRIBUTE_NAME:
+            case PhoneType::ATTRIBUTE_NAME:
+            case ScheduleType::ATTRIBUTE_NAME:
+            case StringType::ATTRIBUTE_NAME:
+            case TextType::ATTRIBUTE_NAME:
+            case TimeType::ATTRIBUTE_NAME:
+                return 'string';
+            case DoubleType::ATTRIBUTE_NAME:
+            case MoneyType::ATTRIBUTE_NAME:
+            case MoneyWithCurrencyType::ATTRIBUTE_NAME:
+                return 'float';
+            case BooleanType::ATTRIBUTE_NAME:
+                return 'bool';
+            case IntegerType::ATTRIBUTE_NAME:
+            case SizeType::ATTRIBUTE_NAME:
+            case PrimaryKeyType::ATTRIBUTE_NAME:
+            case FileType::ATTRIBUTE_NAME:
+                return 'int';
+            case EnumListType::ATTRIBUTE_NAME:
+            case RangeType::ATTRIBUTE_NAME:
+            case EnumType::ATTRIBUTE_NAME:
+            case FilesType::ATTRIBUTE_NAME:
+            case RelationType::ATTRIBUTE_NAME:
+                return 'array';
+            default:
+                return null;
+        }
+    }
 
     /**
      * @param BackendModelEntity $entity
@@ -110,7 +181,7 @@ class BackendModelAttributeEntity extends BackendModelAttributeEntityMeta
      */
     public function getDbType()
     {
-        return \Yii::$app->types->getType($this->appType)->giiDbType($this);
+        return Yii::$app->types->getType($this->appType)->giiDbType($this);
     }
 
     /**
@@ -166,7 +237,7 @@ class BackendModelAttributeEntity extends BackendModelAttributeEntityMeta
             $arguments = count($parts) > 1 ? implode(', ', array_slice($parts, 1)) : '';
 
             // 'required' property is handled separately for Postgres
-            $isPostgres = \Yii::$app->db->getSchema() instanceof \yii\db\pgsql\Schema;
+            $isPostgres = Yii::$app->db->getSchema() instanceof \yii\db\pgsql\Schema;
             $notNull = !$isPostgres && $this->isRequired ? '->notNull()' : '';
             $defaultValue = !$isPostgres && $this->defaultValue !== null && $this->defaultValue !== ''
                 ? '->defaultValue(' . (preg_match('/^[0-9]+$/', $this->defaultValue) ? $this->defaultValue : "'" . $this->defaultValue . "'") . ')'
