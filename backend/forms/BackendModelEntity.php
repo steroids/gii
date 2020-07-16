@@ -263,6 +263,7 @@ class BackendModelEntity extends BackendModelEntityMeta implements EntityInterfa
             $props = [];
             $type = \Yii::$app->types->getType($this->getAttributeEntity($attribute)->appType);
             if (!$type) {
+                // TODO
                 var_dump($attribute, $item);
                 exit();
             }
