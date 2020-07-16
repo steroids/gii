@@ -3,7 +3,6 @@
 namespace app\views;
 
 use steroids\gii\forms\BackendModelEntity;
-use yii\helpers\ArrayHelper;
 
 /* @var $modelEntity BackendModelEntity */
 
@@ -41,7 +40,7 @@ abstract class <?= $modelEntity->name ?>Meta extends Model<?= "\n" ?>
 {
 <?php if (count($modelEntity->getProperties()) > 0) { ?>
 <?php foreach ($modelEntity->getProperties() as $key => $value) { ?>
-    public $<?= $key ?><?= $value !== null ? ' = ' . $value : '' ?>;
+    public <?= $value ? 'array' : '' ?> $<?= $key ?><?= $value !== null ? ' = ' . $value : '' ?>;
 <?php } ?>
 
 <?php } ?>

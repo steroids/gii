@@ -6,7 +6,7 @@ import {connect} from 'react-redux';
 import _get from 'lodash/get';
 import _isEqual from 'lodash/isEqual';
 import _isEmpty from 'lodash/isEmpty';
-import queryString from 'query-string';
+import * as queryString from 'qs';
 import {goToRoute} from '@steroidsjs/core/actions/router';
 import Loader from '@steroidsjs/core/ui/layout/Loader';
 
