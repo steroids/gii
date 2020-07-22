@@ -179,6 +179,11 @@ class GiiController extends Controller
             ];
         }
 
+        // Order modules
+        foreach ($applications as &$application) {
+            ArrayHelper::multisort($application['items'], 'id', SORT_ASC);
+        }
+
         return [
             'config' => [
                 'http' => [

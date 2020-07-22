@@ -63,8 +63,10 @@ class BackendModuleEntity extends BackendModuleEntityMeta
             return;
         }
 
+        $classFile = ModuleHelper::resolveModule($entity->classFile->moduleDir);
         $moduleEntity = new static([
-            'classFile' => ModuleHelper::resolveModule($entity->classFile->moduleDir),
+            'classFile' => $classFile,
+            'id' => $classFile->moduleId,
         ]);
         $moduleEntity->save();
     }
