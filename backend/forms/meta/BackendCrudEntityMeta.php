@@ -21,12 +21,14 @@ abstract class BackendCrudEntityMeta extends FormModel
     public $createActionCreate;
     public $createActionUpdate;
     public $createActionView;
+    public $typeController;
+    public $viewSchema;
 
     public function rules()
     {
         return [
-            [['namespace', 'name', 'queryModel', 'searchModel', 'title', 'url'], 'string', 'max' => 255],
-            [['namespace', 'name', 'queryModel', 'title'], 'required'],
+            [['namespace', 'name', 'queryModel', 'searchModel', 'typeController','title','viewSchema', 'url'], 'string', 'max' => 255],
+            [['namespace', 'name', 'queryModel', /*'title'*/], 'required'],
             [['createActionIndex', 'withDelete', 'withSearch', 'createActionCreate', 'createActionUpdate', 'createActionView'], 'steroids\\core\\validators\\ExtBooleanValidator'],
         ];
     }
@@ -45,6 +47,13 @@ abstract class BackendCrudEntityMeta extends FormModel
             'namespace' => [
                 'label' => Yii::t('steroids', 'Namespace'),
                 'isRequired' => true
+            ],
+            'typeController' => [
+                'label' => Yii::t('steroids', 'Type controller'),
+                'isRequired' => true
+            ],
+            'viewSchema' => [
+                'label' => Yii::t('steroids', 'View schema'),
             ],
             'name' => [
                 'label' => Yii::t('steroids', 'Class name'),

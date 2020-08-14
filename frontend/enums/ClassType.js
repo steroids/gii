@@ -6,6 +6,7 @@ export default class ClassType extends Enum {
     static MODEL = 'model';
     static FORM = 'form';
     static ENUM = 'enum';
+    static CRUD = 'crud';
 
     static getKeys() {
         return [
@@ -13,6 +14,7 @@ export default class ClassType extends Enum {
             this.MODEL,
             this.FORM,
             this.ENUM,
+            this.CRUD,
         ];
     }
 

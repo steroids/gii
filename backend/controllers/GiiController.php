@@ -2,6 +2,8 @@
 
 namespace steroids\gii\controllers;
 
+use steroids\core\base\Model;
+use steroids\gii\forms\BackendCrudEntity;
 use Yii;
 use steroids\gii\GiiAsset;
 use steroids\core\base\FormModel;
@@ -15,7 +17,7 @@ use steroids\gii\forms\BackendEnumEntity;
 use steroids\gii\forms\BackendFormEntity;
 use steroids\gii\forms\BackendModelEntity;
 use steroids\gii\models\AuthPermissionSync;
-use yii\base\Model;
+use yii\base\Exception;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\StringHelper;
@@ -66,8 +68,8 @@ class GiiController extends Controller
 
     public function actionIndex()
     {
-        \Yii::$app->assetManager->bundles = [];
-        \Yii::$app->assetManager->linkAssets = true;
+        Yii::$app->assetManager->bundles = [];
+        Yii::$app->assetManager->linkAssets = true;
         GiiAsset::register($this->view);
 
         $this->layout = '@steroids/core/views/layout-blank';
@@ -97,6 +99,12 @@ class GiiController extends Controller
                 'label' => 'models',
                 'type' => ClassType::MODEL,
                 'dir' => ClassType::getDir(ClassType::MODEL),
+            ],
+            [
+                'className' => BackendCrudEntity::class,
+                'label' => 'cruds',
+                'type' => ClassType::CRUD,
+                'dir' => ClassType::getDir(ClassType::CRUD),
             ],
         ];
 
@@ -194,8 +202,8 @@ class GiiController extends Controller
                 ],
             ],
             'meta' => Yii::$app->types->getFrontendMeta(
-                \Yii::$app->request->post('models'),
-                \Yii::$app->request->post('enums')
+                Yii::$app->request->post('models'),
+                Yii::$app->request->post('enums')
             ),
             'applications' => $applications,
             'types' => array_map(
@@ -207,11 +215,18 @@ class GiiController extends Controller
                         'additionalFields' => !empty($additionalFields) ? $additionalFields : null,
                     ];
                 },
-                \Yii::$app->types->getTypes()
+                Yii::$app->types->getTypes()
             ),
         ];
     }
 
+    /**
+     * @param string $type
+     * @return Model|EntityInterface
+     * @throws BadRequestHttpException
+     * @throws Exception
+     * @throws \Exception
+     */
     public function actionEntity($type)
     {
         /** @var EntityInterface|FormModel $entityClass */
@@ -260,7 +275,7 @@ class GiiController extends Controller
                     break;
             }
 
-            if ($entity->load(\Yii::$app->request->post())) {
+            if ($entity->load(Yii::$app->request->post())) {
                 $entity->save();
             }
         } elseif ($classFile) {
@@ -276,8 +291,8 @@ class GiiController extends Controller
         AuthPermissionSync::syncModels();
         AuthPermissionSync::syncActions();
 
-        $auth = \Yii::$app->authManager;
-        $prefix = \Yii::$app->request->post('prefix');
+        $auth = Yii::$app->authManager;
+        $prefix = Yii::$app->request->post('prefix');
 
         // Get permissions and roles
         $permissions = AuthPermissionSync::getPermissions($prefix);
@@ -321,11 +336,11 @@ class GiiController extends Controller
 
     public function actionApiPermissionsSave()
     {
-        $prefix = \Yii::$app->request->post('prefix');
-        $data = \Yii::$app->request->post('rules');
+        $prefix = Yii::$app->request->post('prefix');
+        $data = Yii::$app->request->post('rules');
         $allNames = ArrayHelper::getColumn(AuthPermissionSync::getPermissions($prefix), 'name');
 
-        $auth = \Yii::$app->authManager;
+        $auth = Yii::$app->authManager;
         foreach ($auth->getRoles() as $role) {
             $rules = ArrayHelper::getValue($data, $role->name, []);
             $addedNames = [];
@@ -363,12 +378,12 @@ class GiiController extends Controller
             }
         }
 
-        \Yii::$app->session->addFlash('success', 'Permissions ' . $prefix . '::* updated');
+        Yii::$app->session->addFlash('success', 'Permissions ' . $prefix . '::* updated');
     }
 
     protected function getChildNamesRecursive($permissionName)
     {
-        $auth = \Yii::$app->authManager;
+        $auth = Yii::$app->authManager;
         $auth->getPermission($permissionName);
         $names = [];
         foreach ($auth->getChildren($permissionName) as $child) {

@@ -2,30 +2,47 @@
 
 namespace app\views;
 
-use steroids\gii\generators\crud\CrudGenerator;
-use steroids\gii\models\ControllerClass;
+use steroids\gii\forms\BackendCrudEntity;
 use yii\web\View;
 
-/* @var $crudEntity ControllerClass */
+/**
+ * @var View $this
+ * @var BackendCrudEntity $crudEntity
+ */
 
 $useClasses = [];
-$meta = $crudEntity->metaClass->renderMeta('        ', $useClasses);
+$metaControllerName = $crudEntity->getControllerName() . 'MetaController';
+$searchClassName = null;
+$modelClassName = null;
+
+if ($crudEntity->searchModel) {
+    $separateTmpAr = explode('\\',$crudEntity->searchModel);
+    $searchClassName = array_pop($separateTmpAr);
+}
+
+if ($crudEntity->queryModel) {
+    $separateTmpAr = explode('\\',$crudEntity->queryModel);
+    $modelClassName = array_pop($separateTmpAr);
+}
 
 echo "<?php\n";
 ?>
 
-namespace <?= $crudEntity->metaClass->namespace ?>\meta;
+namespace <?= $crudEntity->classFile->namespace ?>\meta;
 
-use Yii;
-use extpoint\yii2\base\CrudController;
-<?php foreach (array_unique($useClasses) as $relationClassName) { ?>
+use <?= $crudEntity->queryModel ?>;
+use <?= $crudEntity->searchModel ?>;
+use steroids\core\base\CrudApiController;
+<?php foreach (array_unique($useClasses) as $relationClassName): ?>
 use <?= $relationClassName ?>;
-<?php } ?>
+<?php endforeach; ?>
 
-abstract class <?= $crudEntity->metaClass->name ?> extends CrudController
+abstract class <?= $metaControllerName ?> extends CrudApiController
 {
-    public static function meta()
-    {
-        return <?= $meta ?>;
-    }
+<?php if($modelClassName): ?>
+    public static $modelClass = <?= $modelClassName ?>::class;
+<?php endif; ?>
+<?php if($searchClassName): ?>
+    public static $searchModelClass = <?= $searchClassName ?>::class;
+<?php endif; ?>
 }
