@@ -1,16 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {Form, Button, Field, FieldList} from '../../../../../../../../ui/form';
-
-import {html} from 'components';
-import CrudEntityMeta from '../../../../../forms/meta/CrudEntityMeta';
-import CrudItemEntityMeta from '../../../../../forms/meta/CrudItemEntityMeta';
+import {Form, Button, Field, FieldList, AutoCompleteField} from '@steroidsjs/core/ui/form';
 
 import './CrudCreatorView.scss';
+import bem from '@steroidsjs/core/hoc/bem';
+import ClassType from '../../../enums/ClassType';
 
-const bem = html.bem('CrudCreatorView');
 const FORM_ID = 'CrudCreatorView';
 
+@bem('CrudCreatorView')
 export default class CrudCreatorView extends React.PureComponent {
 
     static propTypes = {
@@ -31,23 +29,27 @@ export default class CrudCreatorView extends React.PureComponent {
         })),
         classType: PropTypes.string,
         onEntityComplete: PropTypes.func,
+        onSubmit: PropTypes.func,
+        classesByType: PropTypes.object,
     };
 
     render() {
+        const bem = this.props.bem;
         return (
             <div className={bem.block()}>
                 <Form
                     formId={FORM_ID}
-                    action='/api/gii/class-save'
-                    model={CrudEntityMeta}
+                    action={'/api/gii/class-save'}
+                    // model={CrudEntityMeta}
                     layout='default'
                     size='sm'
                     initialValues={this.props.initialValues}
                     onComplete={this.props.onEntityComplete}
+                    onSubmit={this.props.onSubmit}
                 >
                     <div className='row'>
                         <div className='col-3'>
-                            <Field attribute='moduleId'/>
+                            <Field disabled attribute='moduleId'/>
                         </div>
                         <div className='col-3'>
                             <Field
@@ -58,15 +60,17 @@ export default class CrudCreatorView extends React.PureComponent {
                     </div>
                     <div className='row'>
                         <div className='col-5'>
-                            <Field
+                            <AutoCompleteField
                                 attribute='queryModel'
                                 placeholder='app\user\models\User'
+                                items={this.props.classesByType[ClassType.MODEL]}
                             />
                         </div>
                         <div className='col-5'>
-                            <Field
+                            <AutoCompleteField
                                 attribute='searchModel'
                                 placeholder='app\user\forms\UserSearch'
+                                items={this.props.classesByType[ClassType.FORM]}
                             />
                         </div>
                     </div>
@@ -89,7 +93,7 @@ export default class CrudCreatorView extends React.PureComponent {
                     </h3>
                     <FieldList
                         attribute='items'
-                        model={CrudItemEntityMeta}
+                        // model={CrudItemEntityMeta}
                         appTypes={this.props.appTypes}
                         className={bem(bem.element('field-list'), 'my-2')}
                         items={[

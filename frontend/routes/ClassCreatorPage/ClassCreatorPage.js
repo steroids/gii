@@ -1,14 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import _get from 'lodash-es/get';
-import {Link} from '../../../../../../../ui/nav';
+import {Link} from '@steroidsjs/core/ui/nav';
 
 import {html} from 'components';
-import ClassTypeMeta from '../../../../enums/meta/ClassTypeMeta';
+import ClassType from '../../enums/ClassType';
 import CrudCreatorView from './views/CrudCreatorView';
-import EnumCreatorView from './views/EnumCreatorView';
-import ModelView from './views/ModelCreatorView';
-import WidgetCreatorView from './views/WidgetCreatorView';
+import EnumView from '../SourcesPage/views/EnumView';
+import ModelView from '../SourcesPage/views/ModelView';
 
 import './ClassCreatorPage.scss';
 
@@ -30,7 +29,7 @@ export default class ClassCreatorPage extends React.PureComponent {
                 name: PropTypes.string,
                 className: PropTypes.string,
             })),
-            'enum': PropTypes.arrayOf(PropTypes.shape({
+            enum: PropTypes.arrayOf(PropTypes.shape({
                 moduleId: PropTypes.string,
                 name: PropTypes.string,
                 className: PropTypes.string,
@@ -71,11 +70,10 @@ export default class ClassCreatorPage extends React.PureComponent {
         }
 
         const viewMap = {
-            [ClassTypeMeta.CRUD]: CrudCreatorView,
-            [ClassTypeMeta.ENUM]: EnumCreatorView,
-            [ClassTypeMeta.MODEL]: ModelView,
-            [ClassTypeMeta.FORM]: ModelView,
-            [ClassTypeMeta.WIDGET]: WidgetCreatorView,
+            [ClassType.CRUD]: CrudCreatorView,
+            [ClassType.ENUM]: EnumView,
+            [ClassType.MODEL]: ModelView,
+            [ClassType.FORM]: ModelView,
         };
         const CreatorView = viewMap[values.classType];
 

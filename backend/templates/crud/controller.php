@@ -2,19 +2,23 @@
 
 namespace app\views;
 
-use steroids\gii\generators\crud\CrudGenerator;
-use steroids\gii\models\ControllerClass;
+use steroids\gii\forms\BackendCrudEntity;
 use yii\web\View;
 
-/* @var $crudEntity ControllerClass */
+/**
+ * @var View $this
+ * @var BackendCrudEntity $crudEntity
+ */
+
+$metaControllerName = $crudEntity->getControllerName() . 'MetaController';
 
 echo "<?php\n";
 ?>
 
-namespace <?= $crudEntity->namespace ?>;
+namespace <?= $crudEntity->classFile->namespace ?>;
 
-use <?= $crudEntity->metaClass->className ?>;
+use <?= $crudEntity->classFile->namespace ?>\meta\<?= $metaControllerName ?>;
 
-class <?= $crudEntity->name ?> extends <?= $crudEntity->metaClass->name . "\n" ?>
+class <?= $crudEntity->classFile->name ?> extends <?= $metaControllerName . "\n" ?>
 {
 }

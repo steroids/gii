@@ -5,6 +5,8 @@ namespace steroids\gii\forms;
 use steroids\core\base\Model;
 use steroids\gii\forms\meta\BackendModelAttributeEntityMeta;
 use steroids\gii\traits\CustomPropertyTrait;
+use Yii;
+use yii\db\pgsql\Schema;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -23,6 +25,17 @@ class BackendModelAttributeEntity extends BackendModelAttributeEntityMeta
      * @var string
      */
     public $customMigrationColumnType;
+
+    /**
+     * Return property type depends by appType
+     *
+     * @return string|null
+     */
+    public function getPropertyType()
+    {
+        $type = Yii::$app->types->getType($this->appType);
+        return $type->getPhpType();
+    }
 
     /**
      * @param BackendModelEntity $entity
@@ -110,7 +123,7 @@ class BackendModelAttributeEntity extends BackendModelAttributeEntityMeta
      */
     public function getDbType()
     {
-        return \Yii::$app->types->getType($this->appType)->giiDbType($this);
+        return Yii::$app->types->getType($this->appType)->giiDbType($this);
     }
 
     /**
@@ -166,7 +179,7 @@ class BackendModelAttributeEntity extends BackendModelAttributeEntityMeta
             $arguments = count($parts) > 1 ? implode(', ', array_slice($parts, 1)) : '';
 
             // 'required' property is handled separately for Postgres
-            $isPostgres = \Yii::$app->db->getSchema() instanceof \yii\db\pgsql\Schema;
+            $isPostgres = Yii::$app->db->getSchema() instanceof Schema;
             $notNull = !$isPostgres && $this->isRequired ? '->notNull()' : '';
             $defaultValue = !$isPostgres && $this->defaultValue !== null && $this->defaultValue !== ''
                 ? '->defaultValue(' . (preg_match('/^[0-9]+$/', $this->defaultValue) ? $this->defaultValue : "'" . $this->defaultValue . "'") . ')'

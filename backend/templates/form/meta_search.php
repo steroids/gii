@@ -29,12 +29,12 @@ use <?= $formEntity->queryModelEntity->getClassName() ?>;
 abstract class <?= $formEntity->name ?>Meta extends SearchModel
 {
 <?php foreach ($formEntity->publicAttributeItems as $metaItem) { ?>
-    public $<?= $metaItem->name ?>;
+    public <?= $metaItem->getPropertyType() ?> $<?= $metaItem->name ?>;
 <?php } ?>
 
 <?php if (count($formEntity->getProperties()) > 0) { ?>
 <?php foreach ($formEntity->getProperties() as $key => $value) { ?>
-    public $<?= $key ?><?= $value !== null ? ' = ' . $value : '' ?>;
+    public <?= $value ? 'array' : '' ?> $<?= $key ?><?= $value !== null ? ' = ' . $value : '' ?>;
 <?php } ?>
 
 <?php } ?>

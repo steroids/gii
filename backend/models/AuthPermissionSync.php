@@ -4,7 +4,9 @@ namespace steroids\gii\models;
 
 use steroids\core\components\AuthManager;
 use steroids\core\components\SiteMapItem;
+use steroids\gii\forms\BackendEnumEntity;
 use steroids\gii\forms\BackendModelEntity;
+use Yii;
 use yii\base\BaseObject;
 use yii\helpers\ArrayHelper;
 use yii\rbac\Permission;
@@ -29,7 +31,7 @@ class AuthPermissionSync extends BaseObject
      */
     public static function getPermissions($prefix)
     {
-        return array_filter(\Yii::$app->authManager->getPermissions(), function (Permission $permission) use ($prefix) {
+        return array_filter(Yii::$app->authManager->getPermissions(), function (Permission $permission) use ($prefix) {
             return strpos($permission->name . self::SEPARATOR, $prefix . self::SEPARATOR) === 0;
         });
     }
@@ -39,15 +41,15 @@ class AuthPermissionSync extends BaseObject
      */
     public static function syncRoles()
     {
-        $auth = \Yii::$app->authManager;
+        $auth = Yii::$app->authManager;
         $roles = [
             AuthManager::ROLE_GUEST,
         ];
 
         // Find enum class
-        foreach (EnumClass::findAll() as $enumClass) {
+        foreach (BackendEnumEntity::findAll() as $enumClass) {
             if ($enumClass->name === 'UserRole') {
-                $roles = array_merge($roles, $enumClass->className::getKeys());
+                $roles = array_merge($roles, $enumClass->classFile->className::getKeys());
             }
         }
 
@@ -74,7 +76,7 @@ class AuthPermissionSync extends BaseObject
         foreach (BackendModelEntity::findAll() as $modelClass) {
             $modelPermission = self::findOrCreate([
                 self::PREFIX_MODEL,
-                $modelClass->className,
+                $modelClass->classFile->className,
             ]);
             $addedNames[] = $modelPermission->name;
 
@@ -82,7 +84,7 @@ class AuthPermissionSync extends BaseObject
             foreach (self::$defaultAttributeRules as $rule) {
                 $attributePermission = self::findOrCreate([
                     self::PREFIX_MODEL,
-                    $modelClass->className,
+                    $modelClass->classFile->className,
                     $rule,
                 ]);
                 $addedNames[] = $attributePermission->name;
@@ -92,7 +94,7 @@ class AuthPermissionSync extends BaseObject
                 if (!in_array($rule, self::$defaultAttributeRules)) {
                     $attributePermission = self::findOrCreate([
                         self::PREFIX_MODEL,
-                        $modelClass->className,
+                        $modelClass->classFile->className,
                         $rule,
                     ]);
                     $addedNames[] = $attributePermission->name;
@@ -104,7 +106,7 @@ class AuthPermissionSync extends BaseObject
             foreach ($modelClass->attributeItems as $attributeEntity) {
                 $attributePermission = self::findOrCreate([
                     self::PREFIX_MODEL,
-                    $modelClass->className,
+                    $modelClass->classFile->className,
                     $attributeEntity->name,
                 ]);
                 $addedNames[] = $attributePermission->name;
@@ -119,7 +121,7 @@ class AuthPermissionSync extends BaseObject
 
                     $rulePermission = self::findOrCreate([
                         self::PREFIX_MODEL,
-                        $modelClass->className,
+                        $modelClass->classFile->className,
                         $attributeEntity->name,
                         $rule,
                     ]);
@@ -130,7 +132,7 @@ class AuthPermissionSync extends BaseObject
         }
 
         // Remove not used permissions
-        $auth = \Yii::$app->authManager;
+        $auth = Yii::$app->authManager;
         foreach (array_diff($prevNames, $addedNames) as $name) {
             $auth->remove($auth->getPermission($name));
         }
@@ -143,11 +145,11 @@ class AuthPermissionSync extends BaseObject
     {
         $prevNames = ArrayHelper::getColumn(static::getPermissions(self::PREFIX_ACTION), 'name');
 
-        $items = \Yii::$app->siteMap->getItems();
+        $items = Yii::$app->siteMap->getItems();
         static::syncActionsRecursive($items, $addedNames);
 
         // Remove not used permissions
-        $auth = \Yii::$app->authManager;
+        $auth = Yii::$app->authManager;
         foreach (array_diff($prevNames, $addedNames) as $name) {
             $auth->remove($auth->getPermission($name));
         }
@@ -199,7 +201,7 @@ class AuthPermissionSync extends BaseObject
      */
     public static function safeAddChild($parent, $child)
     {
-        $auth = \Yii::$app->authManager;
+        $auth = Yii::$app->authManager;
         if ($parent && $auth->canAddChild($parent, $child)) {
             $existsChildNames = ArrayHelper::getColumn($auth->getChildren($parent->name), 'name');
             if (!in_array($child->name, $existsChildNames)) {
@@ -214,7 +216,7 @@ class AuthPermissionSync extends BaseObject
      */
     protected static function findOrCreate(array $path)
     {
-        $auth = \Yii::$app->authManager;
+        $auth = Yii::$app->authManager;
         $name = implode(self::SEPARATOR, $path);
 
         $permission = $auth->getPermission($name);

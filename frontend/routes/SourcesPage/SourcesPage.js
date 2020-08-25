@@ -6,7 +6,7 @@ import {connect} from 'react-redux';
 import _get from 'lodash/get';
 import _isEqual from 'lodash/isEqual';
 import _isEmpty from 'lodash/isEmpty';
-import queryString from 'query-string';
+import * as queryString from 'qs';
 import {goToRoute} from '@steroidsjs/core/actions/router';
 import Loader from '@steroidsjs/core/ui/layout/Loader';
 
@@ -19,6 +19,7 @@ import './SourcesPage.scss';
 import SourceTreeView from './views/SourceTreeView';
 import {reInit} from '@steroidsjs/core/actions/auth';
 import ModuleView from './views/ModuleView';
+import CrudCreatorView from '../ClassCreatorPage/views/CrudCreatorView';
 
 @connect(
     state => ({
@@ -121,6 +122,7 @@ export default class SourcesPage extends React.PureComponent {
 
         const type = this.props.match.params.type;
         switch (type) {
+            case ClassType.CRUD:
             case ClassType.MODULE:
             case ClassType.MODEL:
             case ClassType.FORM:
@@ -130,6 +132,7 @@ export default class SourcesPage extends React.PureComponent {
                     [ClassType.MODEL]: ModelView,
                     [ClassType.FORM]: ModelView,
                     [ClassType.ENUM]: EnumView,
+                    [ClassType.CRUD]: CrudCreatorView,
                 };
                 const EntityView = viewsMap[this.props.match.params.type];
                 return (
@@ -144,8 +147,6 @@ export default class SourcesPage extends React.PureComponent {
                         onSubmit={this._onEntitySubmit}
                     />
                 );
-                break;
-
         }
 
         return null;
