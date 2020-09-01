@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {Field, change} from 'redux-form';
-import {Tooltip} from 'reactstrap';
 
 import './PermissionCheckbox.scss';
 import {bem} from '@steroidsjs/core/hoc';
@@ -60,7 +59,7 @@ export default class PermissionCheckbox extends React.PureComponent {
                 <div id={tooltipId}>
                     {label}
                 </div>
-                {this.props.showTooltip && (
+                {/* TODO this.props.showTooltip && (
                     <Tooltip
                         placement='top'
                         isOpen={this.state.isTooltipOpen}
@@ -69,7 +68,7 @@ export default class PermissionCheckbox extends React.PureComponent {
                     >
                         {this.props.permission.description}
                     </Tooltip>
-                )}
+                )*/}
             </div>
         );
     }

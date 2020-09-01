@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {Collapse} from 'reactstrap';
+import {Collapse} from 'react-collapse';
 import {connect} from 'react-redux';
 import {Field, formValueSelector} from 'redux-form';
 
@@ -171,7 +171,7 @@ const WrappedPermissionRow = @bem('PermissionRow')
                         ))}
                     </div>
                     {this.getChildren().length > 0 && (
-                        <Collapse isOpen={this.state.isExpanded}>
+                        <Collapse isOpened={this.state.isExpanded}>
                             <div>
                                 {this.getChildren().map(children => (
                                     <WrappedPermissionRow
