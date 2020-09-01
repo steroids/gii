@@ -2,10 +2,12 @@ import {Redirect} from 'react-router';
 
 import SourcesPage from './SourcesPage';
 import SiteMapPage from './SiteMapPage';
+import {ACCESS_CONTEXT_MODELS, ACCESS_CONTEXT_API} from './SiteMapPage/SiteMapPage';
 
 export const ROUTE_ROOT = 'root';
 export const ROUTE_SOURCES = 'sources';
 export const ROUTE_SITE_MAP = 'site_map';
+export const ROUTE_MODELS_ACCESS = 'models_access';
 
 const roles = [null];
 
@@ -34,6 +36,20 @@ export default {
             layout: 'blank',
             roles,
             component: SiteMapPage,
+            componentProps: {
+                pageContext: ACCESS_CONTEXT_API,
+            }
+        },
+        [ROUTE_MODELS_ACCESS]: {
+            exact: true,
+            path: '/gii/models',
+            label: __('Модели'),
+            layout: 'blank',
+            roles,
+            component: SiteMapPage,
+            componentProps: {
+                pageContext: ACCESS_CONTEXT_MODELS,
+            }
         },
     }
 };

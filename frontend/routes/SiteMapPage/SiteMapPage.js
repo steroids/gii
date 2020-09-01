@@ -9,11 +9,14 @@ import {bem, components, http} from '@steroidsjs/core/hoc';
 
 const FORM_ID = 'SiteMapPage';
 
+export const ACCESS_CONTEXT_API = 'a';
+export const ACCESS_CONTEXT_MODELS = 'm';
+
 @bem('SiteMapPage')
 @components('http')
 @http(props => (
     props.http.post('/api/gii/get-permissions', {
-        prefix: 'a',
+        prefix: props.pageContext,
     })
         .then(data => ({
             roles: data.roles,

@@ -13,14 +13,5 @@ require('../../react-webpack')
                 },
             },
         },
-        devServer: {
-            proxy: [
-                {
-                    context: ['/api'],
-                    target: process.env.APP_BACKEND_URL || 'http://steroids.loc',
-                    changeOrigin: true,
-                },
-            ],
-        },
     })
     .base(__dirname + '/index.js');

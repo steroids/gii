@@ -31,7 +31,7 @@
     },
     {
       "name": "bundle-index.css",
-      "size": 186391,
+      "size": 186999,
       "chunks": [
         "index"
       ],
@@ -43,7 +43,7 @@
     },
     {
       "name": "bundle-index.js",
-      "size": 1619888,
+      "size": 1976924,
       "chunks": [
         "index"
       ],
@@ -55,7 +55,7 @@
     },
     {
       "name": "index.html",
-      "size": 417,
+      "size": 342,
       "chunks": [],
       "chunkNames": [],
       "info": {},
