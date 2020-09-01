@@ -24,7 +24,7 @@ namespace <?= $formEntity->getNamespace() ?>\meta;
 
 use steroids\core\base\FormModel;
 <?php foreach (array_unique($useClasses) as $relationClassName) { ?>
-    use <?= $relationClassName ?>;
+use <?= $relationClassName ?>;
 <?php } ?>
 
 abstract class <?= $formEntity->name ?>Meta extends FormModel
@@ -34,24 +34,24 @@ abstract class <?= $formEntity->name ?>Meta extends FormModel
 <?php } ?>
 
 <?php if (count($formEntity->getProperties()) > 0) { ?>
-    <?php foreach ($formEntity->getProperties() as $key => $value) { ?>
-        public <?= $value ? 'array' : '' ?> $<?= $key ?><?= $value !== null ? ' = ' . $value : '' ?>;
-    <?php } ?>
+<?php foreach ($formEntity->getProperties() as $key => $value) { ?>
+    public <?= $value ? 'array' : '' ?> $<?= $key ?><?= $value !== null ? ' = ' . $value : '' ?>;
+<?php } ?>
 
 <?php } ?>
 <?php if (!empty($rules)) { ?>
     public function rules()
     {
-    return [<?= "\n            " . implode(",\n            ", $rules) . ",\n        " ?>];
+        return [<?= "\n            " . implode(",\n            ", $rules) . ",\n        " ?>];
     }
 <?php } ?>
 <?php if (!empty($behaviors)) { ?>
 
     public function behaviors()
     {
-    return [
-    <?= $behaviors ?>
-    ];
+        return [
+            <?= $behaviors ?>
+        ];
     }
 <?php } ?>
 <?php foreach ($formEntity->publicRelationItems as $relationEntity) { ?>
@@ -61,12 +61,12 @@ abstract class <?= $formEntity->name ?>Meta extends FormModel
     */
     public function get<?= ucfirst($relationEntity->name) ?>()
     {
-    return $this-><?= $relationEntity->isHasOne ? 'hasOne' : 'hasMany' ?>(<?= $relationEntity->relationModelEntry->name ?>::class);
+        return $this-><?= $relationEntity->isHasOne ? 'hasOne' : 'hasMany' ?>(<?= $relationEntity->relationModelEntry->name ?>::class);
     }
 <?php } ?>
 
-public static function meta()
-{
-return <?= $meta ?>;
-}
+    public static function meta()
+    {
+        return <?= $meta ?>;
+    }
 }
