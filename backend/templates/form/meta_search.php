@@ -39,9 +39,13 @@ abstract class <?= $formEntity->name ?>Meta extends SearchModel
 
 <?php } ?>
 <?php if (!empty($rules)) { ?>
+
     public function rules()
     {
-        return [<?= "\n            " . implode(",\n            ", $rules) . ",\n        " ?>];
+        return [
+            ...parent::rules(),
+            <?= implode(",\n            ", $rules) . ",\n" ?>
+        ];
     }
 <?php } ?>
 <?php if (!empty($behaviors)) { ?>
@@ -49,6 +53,7 @@ abstract class <?= $formEntity->name ?>Meta extends SearchModel
     public function behaviors()
     {
         return [
+            ...parent::behaviors(),
             <?= $behaviors ?>
         ];
     }

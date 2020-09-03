@@ -6,10 +6,12 @@ use yii\web\AssetBundle;
 
 class GiiAsset extends AssetBundle
 {
-    /**
-     * {@inheritdoc}
-     */
-    public $sourcePath = '@steroids/gii/assets';
+    public function init()
+    {
+        parent::init();
+
+        $this->sourcePath = dirname(__DIR__) . '/assets';
+    }
 
     /**
      * {@inheritdoc}

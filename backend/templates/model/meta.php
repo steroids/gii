@@ -63,16 +63,20 @@ if ($attributeEntity->isPublishToFrontend) {?>
 
     public function rules()
     {
-        return array_merge(parent::rules(), [<?= "\n            " . implode(",\n            ", $rules) . ",\n        " ?>]);
+        return [
+            ...parent::rules(),
+            <?= implode(",\n            ", $rules) . ",\n" ?>
+        ];
     }
 <?php } ?>
 <?php if (!empty($behaviors)) { ?>
 
     public function behaviors()
     {
-        return array_merge(parent::behaviors(), [
+        return [
+            ...parent::behaviors(),
             <?= $behaviors ?>
-        ]);
+        ];
     }
 <?php } ?>
 <?php foreach ($modelEntity->publicRelationItems as $relationEntity) { ?>
