@@ -6,6 +6,7 @@ use steroids\core\base\Model;
 use steroids\core\helpers\ClassFile;
 use steroids\gii\enums\RelationType;
 use steroids\gii\forms\meta\BackendModelRelationEntityMeta;
+use yii\base\InvalidConfigException;
 use yii\db\ActiveQuery;
 
 /**
@@ -34,7 +35,13 @@ class BackendModelRelationEntity extends BackendModelRelationEntityMeta
         /** @var Model $className */
         $className = $entity->getClassName();
 
-        $modelInstance = new $className();
+        try {
+            $modelInstance = new $className();
+        } catch (InvalidConfigException $e) {
+            // Check no table
+            return [];
+        }
+
         $modelInfo = (new \ReflectionClass($className));
         $parentInfo = $modelInfo->getParentClass();
 

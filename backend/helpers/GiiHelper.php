@@ -199,6 +199,9 @@ class GiiHelper
             case 'string':
                 return "'" . addcslashes($var, "\\\$\'\r\n\t\v\f") . "'";
             case 'array':
+                if (empty($var)) {
+                    return '[]';
+                }
                 $indexed = array_keys($var) === range(0, count($var) - 1);
                 $r = [];
                 $arrayIndent = !$arrayLine ? "\n" : '';
