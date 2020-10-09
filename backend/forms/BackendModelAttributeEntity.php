@@ -39,9 +39,7 @@ class BackendModelAttributeEntity extends BackendModelAttributeEntityMeta
 
     /**
      * @param BackendModelEntity $entity
-     * @param string $classType
      * @return static[]
-     * @throws \ReflectionException
      */
     public static function findAll($entity)
     {
@@ -187,7 +185,7 @@ class BackendModelAttributeEntity extends BackendModelAttributeEntityMeta
 
             if (!$isPostgres && $parts[0] === 'boolean') {
                 $notNull = '->notNull()';
-                $defaultValue = '->defaultValue(0)';
+                $defaultValue = '->defaultValue(false)';
             }
 
             return '$this->' . $map[$parts[0]] . '(' . $arguments . ')' . $notNull . $defaultValue;
