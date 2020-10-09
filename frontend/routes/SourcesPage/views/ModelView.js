@@ -9,6 +9,7 @@ import {bem} from '@steroidsjs/core/hoc';
 import _upperFirst from 'lodash-es/upperFirst';
 
 import ClassType from 'enums/ClassType';
+import MigrateMode from 'enums/MigrateMode';
 import ModelAttributeRow from './ModelAttributeRow';
 import ModelRelationRow from './ModelRelationRow';
 
@@ -57,6 +58,10 @@ export default class ModelView extends React.PureComponent {
 
     render() {
         const bem = this.props.bem;
+        let migrateMode = MigrateMode.NONE;
+        if (this.props.classType === ClassType.MODEL) {
+            migrateMode = this.props.initialValues?.tableName ? MigrateMode.UPDATE : MigrateMode.CREATE;
+        }
         return (
             <div className={bem.block()}>
                 {this.props.formValues && (
@@ -75,7 +80,10 @@ export default class ModelView extends React.PureComponent {
                     model='steroids.gii.forms.BackendModelEntity'
                     layout='default'
                     size='sm'
-                    initialValues={this.props.initialValues}
+                    initialValues={{
+                        ...this.props.initialValues,
+                        migrateMode
+                    }}
                     onSubmit={this.props.onSubmit}
                     autoFocus
                 >
