@@ -162,11 +162,14 @@ class BackendModelEntity extends BackendModelEntityMeta implements EntityInterfa
                 if (!$migrationMethods->isEmpty()) {
                     $name = $migrationMethods->generateName();
                     $path = $this->classFile->moduleDir . '/migrations/' . $name . '.php';
+                    $modulesDir = explode('\\', $this->namespace)[0];
 
                     GiiHelper::renderFile('model/migration', $path, [
                         'modelEntity' => $this,
                         'name' => $name,
-                        'namespace' => 'app\\' . implode('\\', explode('.', $this->classFile->moduleId)) . '\\migrations',
+                        'namespace' => $modulesDir . '\\'
+                            . implode('\\', explode('.', $this->classFile->moduleId))
+                            . '\\migrations',
                         'migrationMethods' => $migrationMethods,
                     ]);
                     \Yii::$app->session->addFlash('success', 'Added migration ' . $name);
