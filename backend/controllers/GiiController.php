@@ -262,8 +262,14 @@ class GiiController extends Controller
             /** @var Model $entity */
             $entity = $entityClass::findOrCreate($classFile);
             $entity->attributes = $data;
+            $postData = Yii::$app->request->post();
+
             switch ($type) {
                 case ClassType::MODEL:
+                    /** @var BackendModelEntity $entity */
+                    // this resolve prevName conflicts
+                    // when we attempt save model more then one time new migration not will be generated
+                    $this->resolvePrevNameConflicts($entity,$postData);
                 case ClassType::FORM:
                     $entity->listenRelationData('attributeItems');
                     $entity->listenRelationData('relationItems');
@@ -274,8 +280,7 @@ class GiiController extends Controller
                     $entity->listenRelationData('items');
                     break;
             }
-
-            if ($entity->load(Yii::$app->request->post())) {
+            if ($entity->load($postData)) {
                 $entity->save();
             }
         } elseif ($classFile) {
@@ -285,6 +290,25 @@ class GiiController extends Controller
         return $entity;
     }
 
+    /**
+     * @param BackendModelEntity $entity
+     * @param array $data
+     */
+    private function resolvePrevNameConflicts($entity, &$data)
+    {
+        if (!empty($data['attributeItems'])) {
+            $indexedAttributeItems = ArrayHelper::index($entity->attributeItems, 'name');
+            $nextAttributeItems = ArrayHelper::getColumn($entity->attributeItems, 'name');
+
+            foreach ($data['attributeItems'] as &$attributesItem) {
+                $attrName = $attributesItem['name'];
+                // if model has attribute then in data prevName also should established
+                if (in_array($attrName, $nextAttributeItems) && empty($attributesItem['prevName'])) {
+                    $attributesItem['prevName'] = $indexedAttributeItems[$attrName]->prevName;
+                }
+            }
+        }
+    }
 
     public function actionApiGetPermissions()
     {
