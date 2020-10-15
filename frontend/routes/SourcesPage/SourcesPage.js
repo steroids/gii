@@ -5,6 +5,8 @@ import Tree from '@steroidsjs/core/ui/nav/Tree';
 import {connect} from 'react-redux';
 import _get from 'lodash/get';
 import _isEqual from 'lodash/isEqual';
+import _isArray from 'lodash/isArray';
+import _mergeWith from 'lodash/mergeWith';
 import _isEmpty from 'lodash/isEmpty';
 import * as queryString from 'qs';
 import {goToRoute} from '@steroidsjs/core/actions/router';
@@ -45,6 +47,12 @@ export default class SourcesPage extends React.PureComponent {
             classesByType: {},
             ...this._fetchEntity(),
         };
+    }
+
+    componentDidMount() {
+        this.setState({
+            classesByType: this._extractClasses(this.props.applications),
+        });
     }
 
     componentDidUpdate(prevProps) {
@@ -162,16 +170,29 @@ export default class SourcesPage extends React.PureComponent {
     }
 
     _extractClasses(items) {
+        const comparator = (objValue, srcValue) => {
+            if (_isArray(objValue)) {
+                srcValue.forEach(className => {
+                    // skip exist class name
+                    if (!objValue.includes(className)) {
+                        objValue.push(className);
+                    }
+                });
+                return objValue;
+            }
+        };
         let classes = {};
         (items || []).forEach((item) => {
             if (item.type && item.className) {
-                classes[item.type] = classes[item.type] || [];
+                if (_isEmpty(classes[item.type])) {
+                    classes[item.type] = [];
+                }
                 classes[item.type].push(item.className);
             }
-            classes = {
-                ...classes,
-                ...this._extractClasses(item.items),
-            };
+
+            if (item?.items) {
+                classes = _mergeWith(classes, this._extractClasses(item.items), comparator);
+            }
         });
         return classes;
     }
