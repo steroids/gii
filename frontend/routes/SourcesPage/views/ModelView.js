@@ -2,6 +2,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import {getFormValues, change} from 'redux-form';
+import {getRouteParams} from '@steroidsjs/core/reducers/router';
 import {Form, AutoCompleteField, Button, Field, DropDownField, FieldList} from '@steroidsjs/core/ui/form';
 import _get from 'lodash/get';
 import _some from 'lodash/some';
@@ -21,10 +22,30 @@ const getFormId = props => ['ModelView', props.entity.namespace, props.entity.na
 @connect(
     (state, props) => ({
         formValues: getFormValues(getFormId(props))(state),
+        routeParams: getRouteParams(state),
     })
 )
 @bem('ModelView')
 export default class ModelView extends React.PureComponent {
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (_get(this.props.formValues, 'namespace') && _get(this.props.routeParams, 'namespace')) {
+            const formNamespace = this.props.formValues.namespace.split('\\');
+            // in url namespace look like `app%5Cuser%5Cmodels`
+            const routeNamespace = this.props.routeParams.namespace.split('%5C');
+
+            if (formNamespace.length >= 2 && routeNamespace.length >= 2) {
+                const formModuleId = [formNamespace[0], formNamespace[1]].join('\\');
+                const routeModuleId = [routeNamespace[0], routeNamespace[1]].join('\\');
+
+                // compare module id both routes if they different that mean page has been updated
+                if (formModuleId !== routeModuleId) {
+                    // change namespace in redux-form
+                    this.props.dispatch(change(getFormId(this.props), 'namespace', routeNamespace.join('\\')));
+                }
+            }
+        }
+    }
 
     static propTypes = {
         entity: PropTypes.shape({
@@ -54,6 +75,7 @@ export default class ModelView extends React.PureComponent {
             label: PropTypes.string,
         })),
         formValues: PropTypes.object,
+        routeParams: PropTypes.object,
     };
 
     render() {

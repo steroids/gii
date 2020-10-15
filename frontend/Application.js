@@ -16,6 +16,9 @@ import 'style/index.scss';
         // Automatically import all fields and formatters from steroids
         ui.addFields(require.context('@steroidsjs/core/ui', true, /Field.tsx?$/));
         ui.addFormatters(require.context('@steroidsjs/core/ui', true, /Formatter.tsx?$/));
+
+        // Automatically import all default icons
+        ui.addIcons(require('@steroidsjs/bootstrap/icon/fontawesome').default);
     },
 })
 export default class Application extends React.PureComponent {
