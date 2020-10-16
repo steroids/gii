@@ -5,7 +5,6 @@ import {getFormValues, change} from 'redux-form';
 import {getRouteParams} from '@steroidsjs/core/reducers/router';
 import {Form, AutoCompleteField, Button, Field, DropDownField, FieldList} from '@steroidsjs/core/ui/form';
 import _get from 'lodash/get';
-import _some from 'lodash/some';
 import {bem} from '@steroidsjs/core/hoc';
 import _upperFirst from 'lodash-es/upperFirst';
 
@@ -151,12 +150,9 @@ export default class ModelView extends React.PureComponent {
                                 component: AutoCompleteField,
                                 items: this.props.sampleAttributes,
                                 onSelect: (item, params) => {
-                                    const hasFilled = _some(Object.keys(item.params), key => !!_get(this.props.formValues, params.prefix + '.' + key));
-                                    if (!hasFilled) {
-                                        this.props.dispatch(Object.keys(item.params).map(key => {
-                                            return change(getFormId(this.props), params.prefix + '.' + key, item.params[key]);
-                                        }));
-                                    }
+                                    this.props.dispatch(Object.keys(item.params).map(key => {
+                                        return change(getFormId(this.props), params.prefix + '.' + key, item.params[key]);
+                                    }));
                                 },
                             },
                             {

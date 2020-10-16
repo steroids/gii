@@ -4,6 +4,7 @@ import {bem, components} from '@steroidsjs/core/hoc';
 import Tree from '@steroidsjs/core/ui/nav/Tree';
 import {connect} from 'react-redux';
 import _get from 'lodash/get';
+import _has from 'lodash/has';
 import _isEqual from 'lodash/isEqual';
 import _isArray from 'lodash/isArray';
 import _mergeWith from 'lodash/mergeWith';
@@ -22,6 +23,8 @@ import SourceTreeView from './views/SourceTreeView';
 import {reInit} from '@steroidsjs/core/actions/auth';
 import ModuleView from './views/ModuleView';
 import CrudCreatorView from '../ClassCreatorPage/views/CrudCreatorView';
+import _orderBy from "lodash/orderBy";
+import _values from "lodash/values";
 
 @connect(
     state => ({
@@ -145,6 +148,7 @@ export default class SourcesPage extends React.PureComponent {
                 const EntityView = viewsMap[this.props.match.params.type];
                 return (
                     <EntityView
+                        sampleAttributes={this._getSampleAttributes()}
                         entity={this.state.entity}
                         initialValues={{
                             ...this.state.entity,
@@ -169,29 +173,43 @@ export default class SourcesPage extends React.PureComponent {
         }
     }
 
-    _extractClasses(items) {
+    /**
+     * Return items group by of type entities
+     *
+     * Example of default behaviour with attribute className
+     * ```
+     * {
+     *     model: ['steroids\auth\models\AuthConfirm','steroids\auth\models\Login'],
+     *     crud: ['steroids\auth\crud\AuthConfirmCrud'],
+     *     form: ['steroids\auth\form\AuthConfirmForm'],
+     *     enum: ['steroids\auth\enum\ConfirmEnum'],
+     * }
+     * ```
+     */
+    _extractClasses(items, attribute = 'className') {
         const comparator = (objValue, srcValue) => {
             if (_isArray(objValue)) {
-                srcValue.forEach(className => {
-                    // skip exist class name
-                    if (!objValue.includes(className)) {
-                        objValue.push(className);
+                srcValue.forEach(attribute => {
+                    // skip exist element
+                    if (!objValue.includes(attribute)) {
+                        objValue.push(attribute);
                     }
                 });
                 return objValue;
             }
         };
+
         let classes = {};
         (items || []).forEach((item) => {
-            if (item.type && item.className) {
+            if (item.type && _has(item, attribute)) {
                 if (_isEmpty(classes[item.type])) {
                     classes[item.type] = [];
                 }
-                classes[item.type].push(item.className);
+                classes[item.type].push(item[attribute]);
             }
 
             if (item?.items) {
-                classes = _mergeWith(classes, this._extractClasses(item.items), comparator);
+                classes = _mergeWith(classes, this._extractClasses(item.items, attribute), comparator);
             }
         });
         return classes;
@@ -239,6 +257,79 @@ export default class SourcesPage extends React.PureComponent {
                     this.props.dispatch(reInit());
                 });
         }
+    }
+
+    _getSampleAttributes() {
+        const extractClasses = this._extractClasses(this.props.applications, 'attributeItems');
+        const uniqueAttributes = [];
+        [...extractClasses['model'], ...extractClasses['form']].forEach(modelAttributes => {
+            if (modelAttributes.length > 0) {
+                modelAttributes.forEach(attribute => {
+                    if (!_get(uniqueAttributes[attribute.name])) {
+                        uniqueAttributes[attribute.name] = attribute;
+                    }
+                });
+            }
+        });
+
+        const sampleAttributes = {};
+        const defaultSamples = {
+            id: ['primaryKey', 'ID'],
+            title: ['string', 'Название'],
+            email: ['email', 'Email'],
+            phone: ['phone', 'Телефон'],
+            password: ['password', 'Пароль'],
+            photo: ['file', 'Фотография'],
+            photos: ['files', 'Фотографии'],
+            image: ['file', 'Изображение'],
+            images: ['files', 'Изображения'],
+            file: ['file', 'Файл'],
+            files: ['files', 'Файлы'],
+            passwordAgain: ['password', 'Повтор пароля'],
+            description: ['text', 'Описание'],
+            content: ['text', 'Контент'],
+            userId: ['integer', 'Пользователь'],
+            authorId: ['integer', 'Автор'],
+            isEnable: ['boolean', 'Включен?'],
+            isDeleted: ['boolean', 'Удален?'],
+            status: ['enum', 'Статус'],
+            createTime: ['autoTime', 'Добавлен'],
+            updateTime: ['autoTime', 'Обновлен', {touchOnUpdate: true}],
+        };
+
+        Object.keys(defaultSamples).forEach(id => {
+            sampleAttributes[id] = {
+                counter: 1,
+                params: {
+                    appType: defaultSamples[id][0],
+                    label: defaultSamples[id][1],
+                    ...defaultSamples[id][2],
+                }
+            };
+        });
+
+        for (const [key, attribute] of Object.entries(uniqueAttributes)) {
+            if (sampleAttributes[attribute.name]) {
+                sampleAttributes[attribute.name].counter++;
+            } else {
+                sampleAttributes[attribute.name] = {
+                    counter: 1,
+                    params: {
+                        appType: attribute.appType,
+                        defaultValue: attribute.defaultValue,
+                        example: attribute.example,
+                        hint: attribute.hint,
+                        label: attribute.label,
+                    },
+                };
+            }
+        }
+
+        Object.keys(sampleAttributes).forEach(id => {
+            sampleAttributes[id].id = id;
+            sampleAttributes[id].label = id;
+        });
+        return _orderBy(_values(sampleAttributes), 'counter', 'desc');
     }
 
 }

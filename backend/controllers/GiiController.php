@@ -139,7 +139,7 @@ class GiiController extends Controller
 
                             $typeItems = array_map(
                                 function (EntityInterface $entity) use ($entityType) {
-                                    return [
+                                    $commonParams = [
                                         'id' => str_replace('\\', '-', $entity->classFile->className),
                                         'type' => $entityType['type'],
                                         'label' => $entity->classFile->name,
@@ -147,6 +147,19 @@ class GiiController extends Controller
                                         'className' => $entity->classFile->className,
                                         'name' => $entity->classFile->name,
                                     ];
+
+                                    if ($entity instanceof BackendModelEntity) {
+                                        /** @var BackendModelEntity $entity */
+                                        $modelAttributes = array_map(function (FormModel $attribute) {
+                                            return $attribute->toFrontend();
+                                        }, $entity->attributeItems);
+
+                                        $commonParams = array_merge($commonParams, [
+                                            'attributeItems' => $modelAttributes
+                                        ]);
+                                    }
+
+                                    return $commonParams;
                                 },
                                 $entities
                             );
