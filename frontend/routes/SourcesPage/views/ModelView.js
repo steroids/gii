@@ -15,6 +15,7 @@ import ModelRelationRow from './ModelRelationRow';
 
 import './ModelView.scss';
 import Detail from '@steroidsjs/core/ui/list/Detail';
+import {smartSearch} from '@steroidsjs/core/utils/text';
 
 const getFormId = props => ['ModelView', props.entity.namespace, props.entity.name || ''].join('_');
 
@@ -230,6 +231,17 @@ export default class ModelView extends React.PureComponent {
                                     attribute: 'relationModel',
                                     items: this.props.classesByType[ClassType.MODEL],
                                     component: AutoCompleteField,
+                                    dataProvider: {
+                                        onSearch: (action, {query}) => {
+                                            const classes = this.props.classesByType[ClassType.MODEL].map(className => ({
+                                                id: className,
+                                                label: className
+                                            }));
+                                            // remove backslash at beginning query
+                                            const normalizedQuery = query.replace(/^\\+/g, '');
+                                            return smartSearch(normalizedQuery, classes);
+                                        },
+                                    }
                                 },
                                 {
                                     attribute: 'relationKey',
