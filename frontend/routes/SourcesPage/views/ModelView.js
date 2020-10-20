@@ -128,6 +128,17 @@ export default class ModelView extends React.PureComponent {
                                 <AutoCompleteField
                                     attribute='queryModel'
                                     items={this.props.classesByType[ClassType.MODEL]}
+                                    dataProvider={{
+                                        onSearch: (action, {query}) => {
+                                            const classes = this.props.classesByType[ClassType.MODEL].map(className => ({
+                                                id: className,
+                                                label: className
+                                            }));
+                                            // remove backslash at beginning query
+                                            const normalizedQuery = query.replace(/^\\+/g, '');
+                                            return smartSearch(normalizedQuery, classes);
+                                        },
+                                    }}
                                 />
                             </div>
                         </div>
