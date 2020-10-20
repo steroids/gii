@@ -64,4 +64,10 @@
       background-color: $gray-700;
     }
   }
+
+  .FormView {
+    .FieldLayoutView .InputFieldView__input {
+      color: white;
+    }
+  }
 }

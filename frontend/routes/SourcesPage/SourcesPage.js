@@ -61,7 +61,7 @@ export default class SourcesPage extends React.PureComponent {
     componentDidUpdate(prevProps) {
         const prevParams = _get(prevProps, 'match.params');
         const params = _get(this.props, 'match.params');
-        if (!_isEqual(prevParams, params)) {
+        if (!_isEqual(prevParams, params) || prevProps.location.search !== this.props.location.search) {
             this.setState({
                 entity: null, // Force destroy Form
             }, () => {
@@ -84,6 +84,22 @@ export default class SourcesPage extends React.PureComponent {
             return null;
         }
 
+        let namespace = '';
+        if (this.state.entity && !_get(this.state.entity, 'name') && _get(this.state.entity, 'namespace')) {
+            namespace = this.state.entity.namespace;
+        }
+
+        if (this.props.location.search.length > 0) {
+            const result = queryString.parse(this.props.location.search.substr(1));
+            namespace = result.namespace;
+        }
+
+        let selectedItemId = this.props.match.params.id;
+        if (!selectedItemId) {
+            const parseNamespace = this._parseNamespace(this.props.applications, namespace);
+            selectedItemId = parseNamespace.split('.').pop();
+        }
+
         const bem = this.props.bem;
         return (
             <div className={bem.block()}>
@@ -101,7 +117,7 @@ export default class SourcesPage extends React.PureComponent {
                             <Tree
                                 id='source'
                                 items={this.props.applications}
-                                selectedItemId={this.props.match.params.id}
+                                selectedItemId={selectedItemId}
                                 onItemClick={this._onTreeClick}
                                 view={SourceTreeView}
                                 autoSave
@@ -124,6 +140,29 @@ export default class SourcesPage extends React.PureComponent {
                 </Resize>
             </div>
         );
+    }
+
+    _parseNamespace(items, namespace = '') {
+        let routePath = '';
+        if (namespace.length === 0) {
+            return routePath;
+        }
+
+        const tokens = namespace.split('\\');
+        const firstToken = tokens.shift();
+
+        if (!firstToken || !items) {
+            return routePath;
+        }
+
+        for (let route of items) {
+            const isExistRoute = route.id.toString().includes(firstToken);
+            if (isExistRoute) {
+                routePath = route.id.toString();
+                const subRoutePath = this._parseNamespace(route.items, tokens.length !== 0 ? tokens.join('\\') : '');
+                return subRoutePath.length === 0 ? routePath : routePath + '.' + subRoutePath;
+            }
+        }
     }
 
     renderEntity() {
