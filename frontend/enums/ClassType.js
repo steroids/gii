@@ -7,6 +7,7 @@ export default class ClassType extends Enum {
     static FORM = 'form';
     static ENUM = 'enum';
     static CRUD = 'crud';
+    static SCHEMA = 'schema';
 
     static getKeys() {
         return [
@@ -15,6 +16,7 @@ export default class ClassType extends Enum {
             this.FORM,
             this.ENUM,
             this.CRUD,
+            this.SCHEMA,
         ];
     }
 

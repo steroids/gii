@@ -4,6 +4,7 @@ namespace steroids\gii\controllers;
 
 use steroids\core\base\Model;
 use steroids\gii\forms\BackendCrudEntity;
+use steroids\gii\forms\BackendSchemaEntity;
 use Yii;
 use steroids\gii\GiiAsset;
 use steroids\core\base\FormModel;
@@ -106,6 +107,13 @@ class GiiController extends Controller
                 'type' => ClassType::CRUD,
                 'dir' => ClassType::getDir(ClassType::CRUD),
             ],
+            [
+                'className' => BackendSchemaEntity::class,
+                'label' => 'schemas',
+                'type' => ClassType::SCHEMA,
+                'dir' => ClassType::getDir(ClassType::SCHEMA),
+                'visible' => false,
+            ],
         ];
 
         // Backend + Steroids
@@ -174,6 +182,7 @@ class GiiController extends Controller
                                 ],
                                 'label' => $entityType['label'],
                                 'items' => $typeItems,
+                                'visible' => $entityType['visible'] ?? true
                             ];
                         }
 

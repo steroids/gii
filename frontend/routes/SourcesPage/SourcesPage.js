@@ -144,12 +144,16 @@ export default class SourcesPage extends React.PureComponent {
 
     _parseNamespace(items, namespace = '') {
         let routePath = '';
-        if (namespace.length === 0) {
+        if (!namespace || namespace.length === 0) {
             return routePath;
         }
 
         const tokens = namespace.split('\\');
-        const firstToken = tokens.shift();
+        let firstToken = tokens.shift();
+
+        if (firstToken === 'controllers') {
+            firstToken = ClassType.CRUD;
+        }
 
         if (!firstToken || !items) {
             return routePath;

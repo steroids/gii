@@ -8,6 +8,7 @@ use steroids\gii\forms\BackendEnumEntity;
 use steroids\gii\forms\BackendFormEntity;
 use steroids\gii\forms\BackendModelEntity;
 use steroids\gii\forms\BackendModuleEntity;
+use steroids\gii\forms\BackendSchemaEntity;
 
 class ClassType extends ClassTypeMeta
 {
@@ -23,6 +24,7 @@ class ClassType extends ClassTypeMeta
             self::ENUM => BackendEnumEntity::class,
             self::CRUD => BackendCrudEntity::class,
             self::MODULE => BackendModuleEntity::class,
+            self::SCHEMA => BackendSchemaEntity::class,
         ];
         return $map[$id];
     }

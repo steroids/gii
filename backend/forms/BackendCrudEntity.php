@@ -2,6 +2,7 @@
 
 namespace steroids\gii\forms;
 
+use ReflectionException;
 use steroids\core\base\CrudApiController;
 use steroids\core\base\SearchModel;
 use steroids\core\helpers\ClassFile;
@@ -9,13 +10,22 @@ use steroids\gii\enums\ClassType;
 use steroids\gii\forms\meta\BackendCrudEntityMeta;
 use steroids\gii\helpers\GiiHelper;
 use steroids\gii\traits\EntityTrait;
+use Throwable;
 use Yii;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Inflector;
 
+/**
+ * @property array $actionControls
+ * @property BackendCrudItemEntity[] $items
+ */
 class BackendCrudEntity extends BackendCrudEntityMeta implements EntityInterface
 {
     use EntityTrait;
+
+    const MODEL_FIELDS = 'showInTable';
+    const MODEL_DETAIL_FIELDS = 'showInView';
+    const MODEL_FORM_FIELDS = 'showInForm';
 
     /**
      * @var ClassFile
@@ -26,6 +36,58 @@ class BackendCrudEntity extends BackendCrudEntityMeta implements EntityInterface
      * @var string
      */
     public $moduleId;
+
+    /**
+     * @param string $attributeName
+     * @return array
+     */
+    public function getModelFields($attributeName)
+    {
+        $fields = [];
+        if (!$this->items) {
+            return [];
+        }
+
+        foreach ($this->items as $modelAttribute) {
+            if ($modelAttribute->$attributeName) {
+                $fields[] = $modelAttribute->name;
+            }
+        }
+        return $fields;
+    }
+
+    /**
+     * @return array
+     */
+    public function getActionControls()
+    {
+        return array_filter([
+            $this->createActionIndex ? 'index' : null,
+            $this->createActionCreate ? 'create' : null,
+            $this->createActionUpdate ? 'update' : null,
+            $this->createActionView ? 'view' : null,
+            $this->createActionUpdateBatch ? 'update-batch' : null,
+            $this->createActionDelete ? 'delete' : null,
+        ]);
+    }
+
+    /**
+     * @param array $controls
+     */
+    public function setActionControls($controls)
+    {
+        foreach ($controls as $control) {
+            $property = 'createAction';
+            if (strpos($control, '-') !== false) {
+                $property .= Inflector::id2camel($control);
+            } else {
+                $property .= ucfirst($control);
+            }
+            if ($this->hasProperty($property)) {
+                $this->$property = true;
+            }
+        }
+    }
 
     /**
      * @return static[]
@@ -51,6 +113,8 @@ class BackendCrudEntity extends BackendCrudEntityMeta implements EntityInterface
             $this->attributes(),
             [
                 'items',
+                'id',
+                'type',
             ]
         );
     }
@@ -120,6 +184,11 @@ class BackendCrudEntity extends BackendCrudEntityMeta implements EntityInterface
         return static::findOrCreate($classFile);
     }
 
+    /**
+     * @param ClassFile $classFile
+     * @return EntityInterface|static
+     * @throws ReflectionException
+     */
     public static function findOrCreate(ClassFile $classFile)
     {
         $entity = new static([
@@ -143,6 +212,14 @@ class BackendCrudEntity extends BackendCrudEntityMeta implements EntityInterface
 
             if (property_exists($className, 'viewSchema')) {
                 $entity->viewSchema = $classFile->reflection->getStaticPropertyValue('viewSchema');
+            }
+
+            if (method_exists($className, 'controls')) {
+                $entity->actionControls = $className::controls();
+            }
+
+            if ($entity->queryModel && !$entity->searchModel) {
+                $entity->populateRelation('items', BackendCrudItemEntity::findAll($entity));
             }
         }
 

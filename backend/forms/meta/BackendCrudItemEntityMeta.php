@@ -7,16 +7,18 @@ use \Yii;
 
 abstract class BackendCrudItemEntityMeta extends FormModel
 {
-    public $name;
-    public $showInForm;
-    public $showInTable;
-    public $showInView;
+    public ?string $name = null;
+    public ?bool $showInForm = null;
+    public ?bool $showInTable = null;
+    public ?bool $showInView = null;
+    public ?bool $isSortable = null;
 
     public function rules()
     {
         return [
-            ['name', 'string'],
-            [['showInForm', 'showInTable', 'showInView'], 'boolean'],
+            ...parent::rules(),
+            ['name', 'string', 'max' => 255],
+            [['showInForm', 'showInTable', 'showInView', 'isSortable'], 'steroids\\core\\validators\\ExtBooleanValidator'],
         ];
     }
 
@@ -24,7 +26,7 @@ abstract class BackendCrudItemEntityMeta extends FormModel
     {
         return [
             'name' => [
-                'label' => Yii::t('steroids', 'Name'),
+                'label' => Yii::t('steroids', 'Name')
             ],
             'showInForm' => [
                 'label' => Yii::t('steroids', 'Show in Form'),
@@ -37,6 +39,11 @@ abstract class BackendCrudItemEntityMeta extends FormModel
             'showInView' => [
                 'label' => Yii::t('steroids', 'Show in View'),
                 'appType' => 'boolean'
+            ],
+            'isSortable' => [
+                'label' => Yii::t('steroids', 'Sortable'),
+                'appType' => 'boolean',
+                'isSortable' => false
             ]
         ];
     }
