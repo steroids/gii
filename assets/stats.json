@@ -43,7 +43,7 @@
     },
     {
       "name": "bundle-index.js",
-      "size": 2423936,
+      "size": 2423955,
       "chunks": [
         "index"
       ],

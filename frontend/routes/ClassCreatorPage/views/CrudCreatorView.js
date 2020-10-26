@@ -314,12 +314,12 @@ export default class CrudCreatorView extends React.PureComponent {
                                 label: 'Show in view',
                                 headerClassName: 'd-none',
                             },
-                            {
-                                attribute: 'isSortable',
-                                component: CheckboxField,
-                                label: 'Sortable',
-                                headerClassName: 'd-none',
-                            },
+                            // {
+                            //     attribute: 'isSortable',
+                            //     component: CheckboxField,
+                            //     label: 'Sortable',
+                            //     headerClassName: 'd-none',
+                            // },
                         ]}
                     />
                 </div>
