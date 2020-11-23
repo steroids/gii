@@ -103,7 +103,7 @@ class AuthPermissionSync extends BaseObject
             }
 
             // Attributes
-            foreach ($modelClass->attributeItems as $attributeEntity) {
+            /*foreach ($modelClass->attributeItems as $attributeEntity) {
                 $attributePermission = self::findOrCreate([
                     self::PREFIX_MODEL,
                     $modelClass->classFile->className,
@@ -128,7 +128,7 @@ class AuthPermissionSync extends BaseObject
                     $addedNames[] = $rulePermission->name;
                     static::safeAddChild($attributePermission, $rulePermission);
                 }
-            }
+            }*/
         }
 
         // Remove not used permissions
