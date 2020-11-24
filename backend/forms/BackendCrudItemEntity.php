@@ -29,9 +29,9 @@ class BackendCrudItemEntity extends BackendCrudItemEntityMeta
                 $hasFormFields = $controller->hasMethod('formFields');
                 $modelAttributes[] = new static([
                     'name' => $attributeName,
-                    'showInForm' => $hasFormFields ? in_array($attributeName, $controller->formFields()) : false,
-                    'showInTable' => in_array($attributeName, $controller->fields()),
-                    'showInView' => in_array($attributeName, $controller->detailFields()),
+                    'showInForm' => $hasFormFields ? in_array($attributeName, $controller->formFields() ?: []) : false,
+                    'showInTable' => in_array($attributeName, $controller->fields() ?: []),
+                    'showInView' => in_array($attributeName, $controller->detailFields() ?: []),
                     'isSortable' => false,
                 ]);
             }
