@@ -1,10 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {connect} from 'react-redux';
 import {Field, change} from 'redux-form';
 
 import './PermissionCheckbox.scss';
-import {bem} from '@steroidsjs/core/hoc';
+import {bem, connect} from '@steroidsjs/core/hoc';
 
 const FORM_ID = 'AccessRulesEditor';
 

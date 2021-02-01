@@ -1,13 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {Form, Button, Field} from '@steroidsjs/core/ui/form';
-import {bem} from '@steroidsjs/core/hoc';
+import {bem, connect} from '@steroidsjs/core/hoc';
 import _get from 'lodash/get';
 import _upperFirst from 'lodash/upperFirst';
 import _lowerFirst from 'lodash/lowerFirst';
 
 import './ModuleView.scss';
-import {connect} from 'react-redux';
 import {getFormValues} from 'redux-form';
 import Detail from '../../../../../react/ui/list/Detail';
 

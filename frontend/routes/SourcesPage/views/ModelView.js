@@ -1,11 +1,10 @@
 import React from 'react';
-import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import {getFormValues, change} from 'redux-form';
 import {getRouteParams} from '@steroidsjs/core/reducers/router';
 import {Form, AutoCompleteField, Button, Field, DropDownField, FieldList} from '@steroidsjs/core/ui/form';
 import _get from 'lodash/get';
-import {bem} from '@steroidsjs/core/hoc';
+import {bem, connect} from '@steroidsjs/core/hoc';
 import _upperFirst from 'lodash-es/upperFirst';
 
 import ClassType from 'enums/ClassType';

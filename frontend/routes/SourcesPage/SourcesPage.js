@@ -1,8 +1,7 @@
 import React from 'react';
 import {Resize, ResizeHorizon} from 'react-resize-layout';
-import {bem, components} from '@steroidsjs/core/hoc';
+import {bem, connect, components} from '@steroidsjs/core/hoc';
 import Tree from '@steroidsjs/core/ui/nav/Tree';
-import {connect} from 'react-redux';
 import _get from 'lodash/get';
 import _has from 'lodash/has';
 import _isEqual from 'lodash/isEqual';

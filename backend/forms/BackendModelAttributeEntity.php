@@ -33,8 +33,7 @@ class BackendModelAttributeEntity extends BackendModelAttributeEntityMeta
      */
     public function getPropertyType()
     {
-        $type = Yii::$app->types->getType($this->appType);
-        return $type->getPhpType();
+        return Yii::$app->types->getType($this->appType)->getPhpType();
     }
 
     /**

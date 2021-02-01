@@ -1,12 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {connect} from 'react-redux';
 import {getFormValues} from 'redux-form';
 import _get from 'lodash-es/get';
 import _upperFirst from 'lodash-es/upperFirst';
 import {Form, Button, Field, InputField, CheckboxField, FieldList} from '@steroidsjs/core/ui/form';
 import Detail from '@steroidsjs/core/ui/list/Detail';
-import {bem} from '@steroidsjs/core/hoc';
+import {bem, connect} from '@steroidsjs/core/hoc';
 
 import './EnumView.scss';
 

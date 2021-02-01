@@ -1,10 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {Collapse} from 'react-collapse';
-import {connect} from 'react-redux';
 import {Field, formValueSelector} from 'redux-form';
 
-import {bem} from '@steroidsjs/core/hoc';
+import {bem, connect} from '@steroidsjs/core/hoc';
 import PermissionCheckbox from './PermissionCheckbox';
 
 import './PermissionRow.scss';
