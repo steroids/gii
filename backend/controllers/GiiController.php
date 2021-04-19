@@ -32,7 +32,6 @@ class GiiController extends Controller
     {
         return [
             'gii' => [
-                'visible' => false,
                 'accessCheck' => [GiiModule::class, 'accessCheck'],
                 'items' => [
                     'index' => '/<action:gii.*>'
@@ -45,7 +44,6 @@ class GiiController extends Controller
     {
         return [
             'gii' => [
-                'visible' => false,
                 'accessCheck' => [GiiModule::class, 'accessCheck'],
                 'items' => [
                     'init' => '/api/gii/init',

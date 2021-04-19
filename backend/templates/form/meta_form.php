@@ -66,7 +66,7 @@ abstract class <?= $formEntity->name ?>Meta extends FormModel
     */
     public function get<?= ucfirst($relationEntity->name) ?>()
     {
-        return $this-><?= $relationEntity->isHasOne ? 'hasOne' : 'hasMany' ?>(<?= $relationEntity->relationModelEntry->name ?>::class);
+        return $this-><?= $relationEntity->isHasOne ? 'hasOne' : 'hasMany' ?>(<?= $relationEntity->name ?>::class);
     }
 <?php } ?>
 
