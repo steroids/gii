@@ -30,6 +30,9 @@ use <?= $relationClassName ?>;
 abstract class <?= $formEntity->name ?>Meta extends FormModel
 {
 <?php foreach ($formEntity->publicAttributeItems as $attributeEntity) { ?>
+    /**
+    * @var <?= $attributeEntity->getPhpDocType()."\n" ?>
+    */
     public $<?= $attributeEntity->name ?>;
 <?php } ?>
 
