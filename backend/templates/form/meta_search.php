@@ -29,8 +29,11 @@ use <?= $formEntity->queryModelEntity->getClassName() ?>;
 abstract class <?= $formEntity->name ?>Meta extends SearchModel
 {
 <?php if (count($formEntity->publicAttributeItems) > 0) { ?>
-<?php foreach ($formEntity->publicAttributeItems as $metaItem) { ?>
-    public <?= $metaItem->getPropertyType() ?> $<?= $metaItem->name ?> = null;
+<?php foreach ($formEntity->publicAttributeItems as $attributeEntity) { ?>
+    /**
+    * @var <?= $attributeEntity->getPhpDocType()."\n" ?>
+    */
+    public $<?= $attributeEntity->name ?>;
 <?php } ?>
 <?php } ?>
 <?php if (count($formEntity->getProperties()) > 0) { ?>
