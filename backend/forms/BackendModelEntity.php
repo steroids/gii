@@ -263,13 +263,17 @@ class BackendModelEntity extends BackendModelEntityMeta implements EntityInterfa
         $result = [];
 
         foreach (static::exportMeta($this->publicAttributeItems) as $attribute => $item) {
-            $props = [];
             $type = \Yii::$app->types->getType($this->getAttributeEntity($attribute)->appType);
             if (!$type) {
                 // TODO
                 var_dump($attribute, $item);
                 exit();
             }
+
+            $props = [
+                'attribute' => $attribute,
+                'type' => $type->name,
+            ];
 
             if ($searchForm) {
                 $type->prepareSearchFieldProps($this->getClassName(), $attribute, $props);
@@ -292,11 +296,12 @@ class BackendModelEntity extends BackendModelEntityMeta implements EntityInterfa
                 }
 
                 // Add other props
-                $type->prepareFieldProps($this->getClassName(), $attribute, $props);
+                // TODO This is logic moved to frontend, remove it
+                // $type->prepareFieldProps($this->getClassName(), $attribute, $props);
             }
 
             if (!empty($props)) {
-                $result[$attribute] = $props;
+                $result[] = $props;
             }
         }
 
