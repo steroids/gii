@@ -25,6 +25,6 @@ class GiiAsset extends AssetBundle
      */
     public $js = [
         'bundle-common.js',
-        'bundle-index.js',
+        'bundle-index.ts',
     ];
 }

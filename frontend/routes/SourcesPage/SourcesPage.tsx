@@ -1,147 +1,93 @@
-import React from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {Resize, ResizeHorizon} from 'react-resize-layout';
-import {bem, connect, components} from '@steroidsjs/core/hoc';
-import Tree from '@steroidsjs/core/ui/nav/Tree';
 import _get from 'lodash/get';
 import _has from 'lodash/has';
+import _values from "lodash/values";
+import _orderBy from "lodash/orderBy";
 import _isEqual from 'lodash/isEqual';
 import _isArray from 'lodash/isArray';
 import _mergeWith from 'lodash/mergeWith';
 import _isEmpty from 'lodash/isEmpty';
 import * as queryString from 'qs';
-import {goToRoute} from '@steroidsjs/core/actions/router';
-import Loader from '@steroidsjs/core/ui/layout/Loader';
 
-import {ROUTE_SOURCES} from '../index';
+import Tree from '@steroidsjs/core/src/ui/nav/Tree';
+import Loader from '@steroidsjs/core/src/ui/layout/Loader';
+import {reInit} from '@steroidsjs/core/src/actions/auth';
+import {goToRoute} from '@steroidsjs/core/src/actions/router';
+import {useBem, useComponents, useSelector} from "@steroidsjs/core/src/hooks";
+
 import EnumView from './views/EnumView';
 import ClassType from '../../enums/ClassType';
 import ModelView from './views/ModelView';
+import ModuleView from './views/ModuleView';
+import SourceTreeView from './views/SourceTreeView';
+import CrudCreatorView from '../ClassCreatorPage/views/CrudCreatorView';
+import {ROUTE_SOURCES} from '../index';
 
 import './SourcesPage.scss';
-import SourceTreeView from './views/SourceTreeView';
-import {reInit} from '@steroidsjs/core/actions/auth';
-import ModuleView from './views/ModuleView';
-import CrudCreatorView from '../ClassCreatorPage/views/CrudCreatorView';
-import _orderBy from "lodash/orderBy";
-import _values from "lodash/values";
+import useDispatch from "@steroidsjs/core/src/hooks/useDispatch";
 
-@connect(
-    state => ({
-        applications: _get(state, 'auth.data.applications'),
-        types: _get(state, 'auth.data.types'),
+export default function SourcesPage (props: any) {
+
+    const dispatch = useDispatch()
+    const components = useComponents()
+
+    const {applications, types} = useSelector(state => {
+        return {
+            applications: _get(state, 'auth.data.applications'),
+            types: _get(state, 'auth.data.types'),
+        }
     })
-)
-@bem('SourcesPage')
-@components('http')
-export default class SourcesPage extends React.PureComponent {
 
-    static propTypes = {};
+    const [entity, setEntity] = useState(null)
+    const [isLoading, setIsLoading] = useState(false)
+    const [classesByType, setClassesByType] = useState(null)
 
-    constructor() {
-        super(...arguments);
-
-        this._onTreeClick = this._onTreeClick.bind(this);
-        this._onEntitySubmit = this._onEntitySubmit.bind(this);
-
-        this.state = {
-            entity: null,
-            isLoading: false,
-            classesByType: {},
-            ...this._fetchEntity(),
-        };
+    // Hook to get prepProps
+    function usePrevious(props) {
+        const prop = useRef();
+        useEffect(() => {prop.current = props;}, [props]);
+        return prop.current;
     }
+    const prevProps = usePrevious(props)
 
-    componentDidMount() {
-        this.setState({
-            classesByType: this._extractClasses(this.props.applications),
-        });
-    }
+    const componentDidUpdate = (prevProps) => useEffect(() => {
+        setClassesByType(_extractClasses(applications))
 
-    componentDidUpdate(prevProps) {
         const prevParams = _get(prevProps, 'match.params');
-        const params = _get(this.props, 'match.params');
-        if (!_isEqual(prevParams, params) || prevProps.location.search !== this.props.location.search) {
-            this.setState({
-                entity: null, // Force destroy Form
-            }, () => {
-                const state = this._fetchEntity();
-                if (state) {
-                    this.setState(state);
-                }
-            });
+        const params = _get(props, 'match.params');
+        if (!_isEqual(prevParams, params) || prevProps.location.search !== props.location.search) {
+            setEntity(null),
+                () => {
+                    const state = _fetchEntity();
+                    if (state) {
+                        this.setState(state); //TODO
+                    }
+            };
         }
 
-        if (prevProps.applications !== this.props.applications) {
-            this.setState({
-                classesByType: this._extractClasses(this.props.applications),
-            });
+        if (prevProps.applications !== applications) {
+            setClassesByType(_extractClasses(applications))
         }
-    }
+    })
 
-    render() {
-        if (!this.props.types) {
-            return null;
-        }
+    componentDidUpdate(prevProps)
 
-        let namespace = '';
-        if (this.state.entity && !_get(this.state.entity, 'name') && _get(this.state.entity, 'namespace')) {
-            namespace = this.state.entity.namespace;
-        }
+    // constructor() {
+    //     super(...arguments);
+    //
+    //     this._onTreeClick = this._onTreeClick.bind(this);
+    //     this._onEntitySubmit = this._onEntitySubmit.bind(this);
+    //
+    //     this.state = {
+    //         entity: null,
+    //         isLoading: false,
+    //         classesByType: {},
+    //         ...this._fetchEntity(),
+    //     };
+    // }
 
-        if (this.props.location.search.length > 0) {
-            const result = queryString.parse(this.props.location.search.substr(1));
-            namespace = result.namespace;
-        }
-
-        let selectedItemId = this.props.match.params.id;
-        if (!selectedItemId) {
-            const parseNamespace = this._parseNamespace(this.props.applications, namespace);
-            selectedItemId = parseNamespace.split('.').pop();
-        }
-
-        const bem = this.props.bem;
-        return (
-            <div className={bem.block()}>
-                <Resize
-                    handleWidth='12px'
-                    handleColor='transparent'
-                >
-                    <ResizeHorizon
-                        minWidth='200px'
-                        width='300px'
-                        overflow='auto'
-                        className={bem.element('tree-wrapper')}
-                    >
-                        <div className={bem.element('tree')}>
-                            <Tree
-                                id='source'
-                                items={this.props.applications}
-                                selectedItemId={selectedItemId}
-                                onItemClick={this._onTreeClick}
-                                view={SourceTreeView}
-                                autoSave
-                            />
-                        </div>
-                    </ResizeHorizon>
-                    <ResizeHorizon
-                        minWidth='600px'
-                        overflow='auto'
-                        className={bem.element('content-wrapper')}
-                    >
-                        <div className={bem.element('content')}>
-                            {this.state.isLoading && (
-                                <Loader/>
-                            ) || (
-                                this.renderEntity()
-                            )}
-                        </div>
-                    </ResizeHorizon>
-                </Resize>
-            </div>
-        );
-    }
-
-    _parseNamespace(items, namespace = '') {
+    const _parseNamespace = (items, namespace = '') => {
         let routePath = '';
         if (!namespace || namespace.length === 0) {
             return routePath;
@@ -162,18 +108,38 @@ export default class SourcesPage extends React.PureComponent {
             const isExistRoute = route.id.toString().includes(firstToken);
             if (isExistRoute) {
                 routePath = route.id.toString();
-                const subRoutePath = this._parseNamespace(route.items, tokens.length !== 0 ? tokens.join('\\') : '');
+                const subRoutePath = _parseNamespace(route.items, tokens.length !== 0 ? tokens.join('\\') : '');
                 return subRoutePath.length === 0 ? routePath : routePath + '.' + subRoutePath;
             }
         }
     }
 
-    renderEntity() {
-        if (!this.state.entity) {
+    if (!types) {
+        return null;
+    }
+
+    let namespace = '';
+    if (entity && !_get(entity, 'name') && _get(entity, 'namespace')) {
+        namespace = entity.namespace;
+    }
+
+    if (props.location.search.length > 0) {
+        const result = queryString.parse(props.location.search.substr(1));
+        namespace = result.namespace.toString(); // TODO
+    }
+
+    let selectedItemId = props.match.params.id;
+    if (!selectedItemId) {
+        const parseNamespace = _parseNamespace(applications, namespace);
+        selectedItemId = parseNamespace.split('.').pop();
+    }
+
+    const renderEntity = () => {
+        if (!entity) {
             return null;
         }
 
-        const type = this.props.match.params.type;
+        const type = props.match.params.type;
         switch (type) {
             case ClassType.CRUD:
             case ClassType.MODULE:
@@ -187,18 +153,18 @@ export default class SourcesPage extends React.PureComponent {
                     [ClassType.ENUM]: EnumView,
                     [ClassType.CRUD]: CrudCreatorView,
                 };
-                const EntityView = viewsMap[this.props.match.params.type];
+                const EntityView = viewsMap[props.match.params.type];
                 return (
                     <EntityView
-                        sampleAttributes={this._getSampleAttributes()}
-                        entity={this.state.entity}
+                        sampleAttributes={_getSampleAttributes()}
+                        entity={entity}
                         initialValues={{
-                            ...this.state.entity,
+                            ...entity,
                         }}
-                        types={this.props.types}
-                        classesByType={this.state.classesByType}
+                        types={types}
+                        classesByType={classesByType}
                         classType={type}
-                        onSubmit={this._onEntitySubmit}
+                        onSubmit={() => _onEntitySubmit}
                     />
                 );
         }
@@ -206,9 +172,9 @@ export default class SourcesPage extends React.PureComponent {
         return null;
     }
 
-    _onTreeClick(e, item) {
+    const _onTreeClick = (e, item) => {
         if (!item.items && item.id) {
-            this.props.dispatch(goToRoute(ROUTE_SOURCES, {
+            dispatch(goToRoute(ROUTE_SOURCES, {
                 type: item.type,
                 id: item.id.replace(/\\/g, '-'),
             }));
@@ -228,7 +194,7 @@ export default class SourcesPage extends React.PureComponent {
      * }
      * ```
      */
-    _extractClasses(items, attribute = 'className') {
+    const _extractClasses = (items, attribute = 'className') => {
         const comparator = (objValue, srcValue) => {
             if (_isArray(objValue)) {
                 srcValue.forEach(attribute => {
@@ -251,27 +217,25 @@ export default class SourcesPage extends React.PureComponent {
             }
 
             if (item?.items) {
-                classes = _mergeWith(classes, this._extractClasses(item.items, attribute), comparator);
+                classes = _mergeWith(classes, _extractClasses(item.items, attribute), comparator);
             }
         });
         return classes;
     }
 
-    _fetchEntity() {
-        const {type, id} = _get(this.props, 'match.params');
+    const _fetchEntity = () => {
+        const {type, id} = _get(props, 'match.params');
         if (type) {
             if (ClassType.getKeys().includes(type)) {
                 if (id) {
-                    this.props.http.get(`/api/gii/entities/${type}`, {id})
+                    components.http.get(`/api/gii/entities/${type}`, {id})
                         .then(entity => {
-                            this.setState({
-                                entity,
-                                isLoading: false,
-                            });
+                            setEntity(entity)
+                            setIsLoading(false)
                         });
-                } else if (this.props.location.search.length > 1) {
+                } else if (props.location.search.length > 1) {
                     return {
-                        entity: queryString.parse(this.props.location.search.substr(1)),
+                        entity: queryString.parse(props.location.search.substr(1)),
                         isLoading: false,
                     };
                 }
@@ -283,31 +247,31 @@ export default class SourcesPage extends React.PureComponent {
         };
     }
 
-    _onEntitySubmit(values) {
-        const {type, id} = _get(this.props, 'match.params');
+    const _onEntitySubmit = (values) => {
+        const {type, id} = _get(props, 'match.params');
         if (type && !_isEmpty(values)) {
-            this.props.http.post(`/api/gii/entities/${type}`, {
+            components.http.post(`/api/gii/entities/${type}`, {
                 ...values,
                 id,
             })
                 .then(entity => {
-                    this.props.dispatch(goToRoute(ROUTE_SOURCES, {
+                    dispatch(goToRoute(ROUTE_SOURCES, {
                         type: entity.type,
                         id: entity.id,
                     }));
 
-                    this.props.dispatch(reInit());
+                    dispatch(reInit());
                 });
         }
     }
 
-    _getSampleAttributes() {
-        const extractClasses = this._extractClasses(this.props.applications, 'attributeItems');
+    const _getSampleAttributes = () => {
+        const extractClasses = _extractClasses(applications, 'attributeItems');
         const uniqueAttributes = [];
         [...extractClasses['model'], ...extractClasses['form']].forEach(modelAttributes => {
             if (modelAttributes.length > 0) {
                 modelAttributes.forEach(attribute => {
-                    if (!_get(uniqueAttributes[attribute.name])) {
+                    if (!_get(uniqueAttributes[attribute.name], modelAttributes)) {
                         uniqueAttributes[attribute.name] = attribute;
                     }
                 });
@@ -374,4 +338,45 @@ export default class SourcesPage extends React.PureComponent {
         return _orderBy(_values(sampleAttributes), 'counter', 'desc');
     }
 
+    const bem = useBem('SourcesPage')
+
+    return (
+        <div className={bem.block()}>
+            <Resize
+                handleWidth='12px'
+                handleColor='transparent'
+            >
+                <ResizeHorizon
+                    minWidth='200px'
+                    width='300px'
+                    overflow='auto'
+                    className={bem.element('tree-wrapper')}
+                >
+                    <div className={bem.element('tree')}>
+                        <Tree
+                            id='source'
+                            items={applications}
+                            selectedItemId={selectedItemId}
+                            onItemClick={_onTreeClick}
+                            view={SourceTreeView}
+                            autoSave
+                        />
+                    </div>
+                </ResizeHorizon>
+                <ResizeHorizon
+                    minWidth='600px'
+                    overflow='auto'
+                    className={bem.element('content-wrapper')}
+                >
+                    <div className={bem.element('content')}>
+                        {isLoading && (
+                            <Loader/>
+                        ) || (
+                            renderEntity()
+                        )}
+                    </div>
+                </ResizeHorizon>
+            </Resize>
+        </div>
+    );
 }
