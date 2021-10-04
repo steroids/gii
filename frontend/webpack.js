@@ -14,4 +14,4 @@ require('../../react-webpack')
             },
         },
     })
-    .base(__dirname + '/index.js');
+    .base(__dirname + '/index.ts');
