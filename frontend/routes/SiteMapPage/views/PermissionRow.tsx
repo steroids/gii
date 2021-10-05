@@ -1,7 +1,7 @@
 import React from 'react';
 import {Collapse} from 'react-collapse';
 import {Field, formValueSelector} from 'redux-form';
-import {useBem, useSelector} from "@steroidsjs/core/src/hooks";
+import {useBem, useSelector} from "@steroidsjs/core/hooks";
 
 import PermissionCheckbox from './PermissionCheckbox';
 

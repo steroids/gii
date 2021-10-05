@@ -2,16 +2,16 @@ import React, {useEffect} from 'react';
 import _get from 'lodash/get';
 import _upperFirst from 'lodash-es/upperFirst';
 import {getFormValues, change} from 'redux-form';
-import useDispatch from "@steroidsjs/core/src/hooks/useDispatch";
-import {smartSearch} from '@steroidsjs/core/src/utils/text';
-import {getRouteParams} from '@steroidsjs/core/src/reducers/router';
-import {useBem, useSelector} from "@steroidsjs/core/src/hooks";
+import useDispatch from "@steroidsjs/core/hooks/useDispatch";
+import {smartSearch} from '@steroidsjs/core/utils/text';
+import {getRouteParams} from '@steroidsjs/core/reducers/router';
+import {useBem, useSelector} from "@steroidsjs/core/hooks";
 
 import ClassType from '../../../enums/ClassType';
 import MigrateMode from '../../../enums/MigrateMode';
 import ModelRelationRow from './ModelRelationRow';
 import ModelAttributeRow from './ModelAttributeRow';
-import {Detail} from "@steroidsjs/core/src/ui/content/Detail";
+import {Detail} from "@steroidsjs/core/ui/content/Detail";
 
 import {
     Form,
@@ -20,7 +20,7 @@ import {
     FieldList,
     DropDownField,
     AutoCompleteField
-} from '@steroidsjs/core/src/ui/form';
+} from '@steroidsjs/core/ui/form';
 
 import './ModelView.scss';
 

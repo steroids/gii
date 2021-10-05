@@ -1,8 +1,8 @@
 import React from 'react';
-import {useBem} from "@steroidsjs/core/src/hooks";
+import {useBem} from "@steroidsjs/core/hooks";
 import {ROUTE_SOURCES} from '../../index';
 
-import Link from '@steroidsjs/core/src/ui/nav/Link';
+import Link from '@steroidsjs/core/ui/nav/Link';
 
 import './SourceTreeView.scss';
 

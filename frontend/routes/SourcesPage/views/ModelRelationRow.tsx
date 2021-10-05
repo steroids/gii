@@ -1,9 +1,9 @@
 import React, {useState} from 'react';
 import {formValueSelector} from 'redux-form';
-import {useBem, useSelector} from "@steroidsjs/core/src/hooks";
+import {useBem, useSelector} from "@steroidsjs/core/hooks";
 
 import RelationType from '../../../enums/RelationType';
-import {Field} from '@steroidsjs/core/src/ui/form';
+import {Field} from '@steroidsjs/core/ui/form';
 
 interface IModelRelationRowProps {
     label?: string | boolean,

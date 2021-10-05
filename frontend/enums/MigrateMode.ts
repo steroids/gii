@@ -2,9 +2,9 @@ import Enum from '@steroidsjs/core/base/Enum';
 
 export default class MigrateMode extends Enum {
 
-    static CREATE = 'create';
-    static UPDATE = 'update';
-    static NONE = 'none';
+    static CREATE = 'create'
+    static UPDATE = 'update'
+    static NONE = 'none'
 
     static getKeys() {
         return [

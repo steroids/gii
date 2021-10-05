@@ -1,14 +1,19 @@
-import React from 'react';
+import React, from 'react';
 import {useBem, useComponents} from "../../../../react/src/hooks";
-import useLayout, {STATUS_LOADING, STATUS_OK} from '@steroidsjs/core/src/hooks/useLayout';
+import useLayout, {STATUS_LOADING, STATUS_OK} from '@steroidsjs/core/hooks/useLayout';
 import {ROUTE_ROOT} from '../../routes';
 
-import Header from '@steroidsjs/core/src/ui/layout/Header';
-import {Notifications} from '@steroidsjs/core/src/ui/layout';
+import Header from '@steroidsjs/core/ui/layout/Header';
+import {Notifications} from '@steroidsjs/core/ui/layout';
 
 import './Layout.scss';
 
-export default function Layout (props: any) {
+interface ILayoutProps {
+    status?: string,
+    children?: () => React.ReactNode,
+}
+
+export default function Layout (props: ILayoutProps) {
 
     const components = useComponents()
 
@@ -49,7 +54,7 @@ export default function Layout (props: any) {
             <Header
                 className={bem('navbar-dark', bem.element('header'))}
                 logo={{
-                    title: 'Steroids Gii',
+                    title: 'Steroids Gi88i',
                 }}
                 nav={{
                     items: ROUTE_ROOT,

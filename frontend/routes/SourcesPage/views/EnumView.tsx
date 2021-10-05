@@ -1,11 +1,11 @@
 import React from 'react';
 import {getFormValues} from 'redux-form';
-import {useBem, useSelector} from "@steroidsjs/core/src/hooks";
+import {useBem, useSelector} from "@steroidsjs/core/hooks";
 
 import _get from 'lodash-es/get';
 import _upperFirst from 'lodash-es/upperFirst';
 
-import {Detail} from "@steroidsjs/core/src/ui/content/Detail";
+import {Detail} from "@steroidsjs/core/ui/content/Detail";
 import {
     Form,
     Button,
@@ -13,7 +13,7 @@ import {
     InputField,
     CheckboxField,
     FieldList
-} from '@steroidsjs/core/src/ui/form';
+} from '@steroidsjs/core/ui/form';
 
 import './EnumView.scss';
 

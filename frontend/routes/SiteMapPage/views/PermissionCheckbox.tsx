@@ -1,7 +1,7 @@
 import React from 'react';
 import {Field, change} from 'redux-form';
-import {useBem} from "@steroidsjs/core/src/hooks";
-import useDispatch from "@steroidsjs/core/src/hooks/useDispatch";
+import {useBem} from "@steroidsjs/core/hooks";
+import useDispatch from "@steroidsjs/core/hooks/useDispatch";
 
 import './PermissionCheckbox.scss';
 

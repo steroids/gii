@@ -1,15 +1,18 @@
 import * as React from 'react';
 import {hot} from 'react-hot-loader';
-import useApplication from "../../react/src/hooks/useApplication";
+import useApplication from "@steroidsjs/core/hooks/useApplication";
 import Router from '@steroidsjs/core/ui/nav/Router';
 
 import 'style/index.scss';
 
-@hot(module)
+// @hot(module)
 
 export default function Application () {
-
-    const {renderApplication} = useApplication({onInit: ({ui}) => {
+    const {renderApplication} = useApplication({
+        reducers: require('@steroidsjs/core/reducers').default,
+        routes: () => require('routes').default,
+        layoutView: () => require('shared/Layout').default,
+        onInit: ({ui}) => {
             // Automatically import all views
             ui.addViews(require.context('@steroidsjs/bootstrap', true, /View.(js|tsx)$/));
             ui.addFields(require.context('@steroidsjs/bootstrap', true, /Field.(js|tsx)$/));
@@ -24,9 +27,9 @@ export default function Application () {
         }})
 
     return renderApplication(
-        <Router
-            wrapperView={require('steroids/gii/frontend/shared/Layout').default}
-            routes={require('steroids/gii/frontend/routes').default}
-        />
+        // <Router
+        //     wrapperView={require('steroids/gii/frontend/shared/Layout').default}
+        //     routes={require('steroids/gii/frontend/routes').default}
+        // />
     );
 }

@@ -5,11 +5,12 @@ import {getFormValues} from "redux-form";
 import _get from 'lodash/get';
 import {useBem} from "../../../../../react/src/hooks";
 import _upperFirst from "lodash-es/upperFirst";
-import useDispatch from "@steroidsjs/core/src/hooks/useDispatch";
-import {smartSearch} from '@steroidsjs/core/src/utils/text';
+import useDispatch from "@steroidsjs/core/hooks/useDispatch";
+import {smartSearch} from '@steroidsjs/core/utils/text';
 import {useSelector} from "../../../../../react/src/hooks";
-import {getRouteParams} from '@steroidsjs/core/src/reducers/router';
+import {getRouteParams} from '@steroidsjs/core/reducers/router';
 
+import {Detail} from "@steroidsjs/core/ui/content/Detail";
 import ClassType from '../../../enums/ClassType';
 
 import {
@@ -21,7 +22,6 @@ import {
     CheckboxField,
 } from '../../../../../react/src/ui/form';
 
-import {Detail} from "../../../../../react/src/ui/content/Detail";
 
 import './CrudCreatorView';
 

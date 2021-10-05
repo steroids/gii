@@ -1,7 +1,7 @@
 import React from 'react';
-import {useBem, useComponents} from "@steroidsjs/core/src/hooks";
+import {useBem, useComponents} from "@steroidsjs/core/hooks";
 
-import {Form} from '@steroidsjs/core/src/ui/form';
+import {Form} from '@steroidsjs/core/ui/form';
 import PermissionRow from './views/PermissionRow';
 
 import './SiteMapPage.scss';

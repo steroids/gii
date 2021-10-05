@@ -3,10 +3,10 @@ import _get from 'lodash/get';
 import _upperFirst from 'lodash/upperFirst';
 import _lowerFirst from 'lodash/lowerFirst';
 import {getFormValues} from 'redux-form';
-import {useBem, useSelector} from "@steroidsjs/core/src/hooks";
+import {useBem, useSelector} from "@steroidsjs/core/hooks";
 
-import {Form, Button, Field} from '@steroidsjs/core/src/ui/form';
-import {Detail} from "@steroidsjs/core/src/ui/content/Detail";
+import {Form, Button, Field} from '@steroidsjs/core/ui/form';
+import {Detail} from "@steroidsjs/core/ui/content/Detail";
 
 import './ModuleView.scss';
 

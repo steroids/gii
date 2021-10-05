@@ -1,6 +1,6 @@
 import React from 'react';
 import {formValueSelector} from 'redux-form';
-import {useBem, useSelector} from "@steroidsjs/core/src/hooks";
+import {useBem, useSelector} from "@steroidsjs/core/hooks";
 
 interface IModelAttributeRowProps {
     label?: string | boolean,

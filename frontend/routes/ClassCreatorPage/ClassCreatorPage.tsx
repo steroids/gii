@@ -4,16 +4,15 @@ import {useBem} from "../../../../react/src/hooks";
 
 import ClassType from '../../enums/ClassType';
 
-import {Link} from '../../../../react/src/ui/nav';
 import EnumView from '../SourcesPage/views/EnumView';
 import ModelView from '../SourcesPage/views/ModelView';
 import CrudCreatorView from './views/CrudCreatorView';
-
+import Button from '@steroidsjs/core/ui/form/Button/Button';
 
 import './ClassCreatorPage.scss';
 
 interface IClassCreatorPageProps {
-    moduleIds?: string[],
+    moduleIds?: any,
     classes?: {
         model?: {
             moduleId?: string,
@@ -73,7 +72,7 @@ export default function ClassCreatorPage (props: IClassCreatorPageProps) {
         [ClassType.MODEL]: ModelView,
         [ClassType.FORM]: ModelView,
     };
-    const CreatorView = viewMap[values.classType];
+    const CreatorView: any = viewMap[values.classType];
 
     const bem = useBem('ClassCreatorPage')
     return (
@@ -81,9 +80,9 @@ export default function ClassCreatorPage (props: IClassCreatorPageProps) {
             <nav aria-label='breadcrumb'>
                 <ol className='breadcrumb'>
                     <li className='breadcrumb-item'>
-                        <Link to='/'>
+                        <Button link to='/'>
                             Сущности
-                        </Link>
+                        </Button>
                     </li>
                     {entity && [
                         (

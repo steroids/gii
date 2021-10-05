@@ -10,11 +10,11 @@ import _mergeWith from 'lodash/mergeWith';
 import _isEmpty from 'lodash/isEmpty';
 import * as queryString from 'qs';
 
-import Tree from '@steroidsjs/core/src/ui/nav/Tree';
-import Loader from '@steroidsjs/core/src/ui/layout/Loader';
-import {reInit} from '@steroidsjs/core/src/actions/auth';
-import {goToRoute} from '@steroidsjs/core/src/actions/router';
-import {useBem, useComponents, useSelector} from "@steroidsjs/core/src/hooks";
+import Tree from '@steroidsjs/core/ui/nav/Tree';
+import Loader from '@steroidsjs/core/ui/layout/Loader';
+import {reInit} from '@steroidsjs/core/actions/auth';
+import {goToRoute} from '@steroidsjs/core/actions/router';
+import {useBem, useComponents, useSelector} from "@steroidsjs/core/hooks";
 
 import EnumView from './views/EnumView';
 import ClassType from '../../enums/ClassType';
@@ -25,7 +25,7 @@ import CrudCreatorView from '../ClassCreatorPage/views/CrudCreatorView';
 import {ROUTE_SOURCES} from '../index';
 
 import './SourcesPage.scss';
-import useDispatch from "@steroidsjs/core/src/hooks/useDispatch";
+import useDispatch from "@steroidsjs/core/hooks/useDispatch";
 
 export default function SourcesPage (props: any) {
 
