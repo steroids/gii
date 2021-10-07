@@ -3,6 +3,7 @@
 namespace steroids\gii\forms;
 
 use steroids\core\base\Model;
+use steroids\core\interfaces\IGiiModelAttribute;
 use steroids\gii\forms\meta\BackendModelAttributeEntityMeta;
 use steroids\gii\traits\CustomPropertyTrait;
 use Yii;
@@ -12,7 +13,7 @@ use yii\helpers\ArrayHelper;
 /**
  * @property-read bool $isProtected
  */
-class BackendModelAttributeEntity extends BackendModelAttributeEntityMeta
+class BackendModelAttributeEntity extends BackendModelAttributeEntityMeta implements IGiiModelAttribute
 {
     use CustomPropertyTrait;
 
@@ -76,6 +77,21 @@ class BackendModelAttributeEntity extends BackendModelAttributeEntityMeta
         return preg_match('/^([^(]+)(\(([^)]+)\))?/', $dbType, $matches)
             ? count($matches) > 2 ? [$matches[1], $matches[3]] : [$matches[1]]
             : null;
+    }
+
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    public function getCustomProperty($name)
+    {
+        return ArrayHelper::getValue($this, $name);
+    }
+
+    public function isModelHasOneRelationExists($relationName)
+    {
+        return $this->modelEntity->getRelationEntity($relationName);
     }
 
     public function onUnsafeAttribute($name, $value)
