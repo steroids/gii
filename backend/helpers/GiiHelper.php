@@ -7,7 +7,7 @@ use steroids\core\helpers\ClassFile;
 use steroids\core\helpers\ModuleHelper;
 use steroids\gii\enums\ClassType;
 use steroids\gii\GiiModule;
-use steroids\gii\models\ValueExpression;
+use steroids\core\base\ValueExpression;
 use yii\base\InvalidConfigException;
 use yii\helpers\FileHelper;
 use yii\helpers\Html;

@@ -4,6 +4,7 @@ namespace steroids\gii\forms;
 
 use steroids\auth\UserInterface;
 use steroids\core\base\Model;
+use steroids\core\base\ValueExpression;
 use steroids\core\helpers\ClassFile;
 use steroids\gii\enums\ClassType;
 use steroids\gii\enums\MigrateMode;
@@ -11,7 +12,6 @@ use steroids\gii\forms\meta\BackendModelEntityMeta;
 use steroids\gii\GiiModule;
 use steroids\gii\helpers\GiiHelper;
 use steroids\gii\models\MigrationMethods;
-use steroids\gii\models\ValueExpression;
 use steroids\gii\traits\EntityTrait;
 use steroids\core\types\RelationType;
 use yii\helpers\ArrayHelper;
