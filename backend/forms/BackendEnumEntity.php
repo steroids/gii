@@ -7,7 +7,7 @@ use steroids\core\helpers\ClassFile;
 use steroids\gii\enums\ClassType;
 use steroids\gii\forms\meta\BackendEnumEntityMeta;
 use steroids\gii\helpers\GiiHelper;
-use steroids\gii\models\ValueExpression;
+use steroids\core\base\ValueExpression;
 use steroids\gii\traits\EntityTrait;
 use yii\helpers\ArrayHelper;
 
