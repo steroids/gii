@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useState} from 'react';
 import {Resize, ResizeHorizon} from 'react-resize-layout';
 import _get from 'lodash/get';
 import _has from 'lodash/has';
@@ -42,50 +42,6 @@ export default function SourcesPage (props: any) {
     const [entity, setEntity] = useState(null)
     const [isLoading, setIsLoading] = useState(false)
     const [classesByType, setClassesByType] = useState(null)
-
-    // Hook to get prepProps
-    function usePrevious(props) {
-        const prop = useRef();
-        useEffect(() => {prop.current = props;}, [props]);
-        return prop.current;
-    }
-    const prevProps = usePrevious(props)
-
-    const componentDidUpdate = (prevProps) => useEffect(() => {
-        setClassesByType(_extractClasses(applications))
-
-        const prevParams = _get(prevProps, 'match.params');
-        const params = _get(props, 'match.params');
-        if (!_isEqual(prevParams, params) || prevProps.location.search !== props.location.search) {
-            setEntity(null),
-                () => {
-                    const state = _fetchEntity();
-                    if (state) {
-                        this.setState(state); //TODO
-                    }
-            };
-        }
-
-        if (prevProps.applications !== applications) {
-            setClassesByType(_extractClasses(applications))
-        }
-    })
-
-    componentDidUpdate(prevProps)
-
-    // constructor() {
-    //     super(...arguments);
-    //
-    //     this._onTreeClick = this._onTreeClick.bind(this);
-    //     this._onEntitySubmit = this._onEntitySubmit.bind(this);
-    //
-    //     this.state = {
-    //         entity: null,
-    //         isLoading: false,
-    //         classesByType: {},
-    //         ...this._fetchEntity(),
-    //     };
-    // }
 
     const _parseNamespace = (items, namespace = '') => {
         let routePath = '';

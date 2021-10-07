@@ -1,4 +1,4 @@
-import React, from 'react';
+import React from 'react';
 import {useBem, useComponents} from "../../../../react/src/hooks";
 import useLayout, {STATUS_LOADING, STATUS_OK} from '@steroidsjs/core/hooks/useLayout';
 import {ROUTE_ROOT} from '../../routes';
@@ -35,8 +35,10 @@ export default function Layout (props: ILayoutProps) {
         })
     )
 
+    const {status} = useLayout()
+
     const renderContent = () => {
-        switch (props.status) {
+        switch (status) {
             case STATUS_LOADING:
                 return null;
 
@@ -45,7 +47,7 @@ export default function Layout (props: ILayoutProps) {
         }
 
         // TODO other statuses
-        return props.status;
+        return status;
     }
 
     const bem = useBem('Layout');
@@ -54,7 +56,7 @@ export default function Layout (props: ILayoutProps) {
             <Header
                 className={bem('navbar-dark', bem.element('header'))}
                 logo={{
-                    title: 'Steroids Gi88i',
+                    title: 'Steroids Gii',
                 }}
                 nav={{
                     items: ROUTE_ROOT,
