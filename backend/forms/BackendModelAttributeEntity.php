@@ -91,7 +91,8 @@ class BackendModelAttributeEntity extends BackendModelAttributeEntityMeta implem
 
     public function isModelHasOneRelationExists($relationName)
     {
-        return $this->modelEntity->getRelationEntity($relationName);
+        $relation = $this->modelEntity->getRelationEntity($relationName);
+        return $relation && $relation->isHasOne;
     }
 
     public function onUnsafeAttribute($name, $value)
